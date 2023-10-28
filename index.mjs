@@ -19,7 +19,7 @@ const cookieSett = {
   sameSite: "Lax",
 };
 const deleteCookie = {
-  expires: new Date(0),
+  maxAge: -1,
   secure: true,
   httpOnly: true,
   sameSite: "Lax",
@@ -27,20 +27,21 @@ const deleteCookie = {
 
 const requireAuth = async (req, res, next) => {
   const mapiToken = req.cookies.mapiTok;
-  if (await checkValidity(mapiToken)) {
-    next(); // User is authenticated, proceed to the next middleware or route
+  if (mapiToken) {
+    if (await checkValidity(mapiToken)) {
+      next(); // User is authenticated, proceed to the next middleware or route
+    } else {
+      res.cookie("mapiTok", "", deleteCookie);
+      res.redirect("/public/login.html"); // User is not authenticated, redirect to login page
+    }
   } else {
-    res.cookie("mapiTok", "", deleteCookie);
     res.redirect("/public/login.html"); // User is not authenticated, redirect to login page
   }
 };
+app.use("/public", express.static("public"));
 
-app.get("/", requireAuth, async (req, res) => {
-  res.redirect("/access");
-});
-
-app.get("/access", requireAuth, async (req, res) => {
-  res.status(200).json({ authorized: "true" });
+app.get("/", requireAuth, (req, res) => {
+  res.redirect("/private");
 });
 
 app.post("/login", async (req, res) => {
@@ -71,8 +72,41 @@ app.post("/login", async (req, res) => {
     });
   }
 });
+app.post("/logout", async (req, res) => {
+  const mapiToken = req.cookies.mapiTok;
+  if (mapiToken) {
+    const response = await axios.post(MAPIURL + "/logout", {
+      token: mapiToken,
+    });
+    if (response.data.Response === "Ok") {
+      res.cookie("mapiTok", "", deleteCookie);
+      res.status(200).json({
+        Response: "Ok",
+        data: { message: "Logged Out" },
+      });
+    } else {
+      res.status(500).json({ Response: "Error" });
+    }
+  } else {
+    res.status(500).json({ Response: "Error" });
+  }
+});
 
-app.use("/public", express.static("public"));
+app.post("/account/getMyInfo", requireAuth, async (req, res) => {
+  const mapiToken = req.cookies.mapiTok;
+  const response = await axios.post(MAPIURL + "/getMyInfo", {
+    token: mapiToken,
+  });
+  if (response.data.Response === "Ok") {
+    res.status(200).json({
+      Response: "Ok",
+      data: response.data.data,
+    });
+  } else {
+    res.status(500).json({ Response: "Error" });
+  }
+});
+app.use("/private", requireAuth, express.static("private"));
 
 app.listen(port, () => {
   console.log(`Server is running on port http://localhost:${port}`);

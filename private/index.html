@@ -10,8 +10,10 @@
         crossorigin="anonymous"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
-        table {
-            width: 100%;
+        .logout-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
         }
     </style>
 
@@ -21,6 +23,7 @@
 </head>
 
 <body>
+    <button id="logoutButton" class="btn btn-danger logout-button">Logout</button>
     <div class="container-fluid">
         <div class="row justify-content-center">
             <div class="col-3"></div>
@@ -33,20 +36,14 @@
         <div class="row justify-content-center">
             <div class="col-md"></div>
             <div class="col-md-3 col-12 text-center">
-                <div class="form-outline mb-4">
-                    <input type="text" id="login" placeholder="Login" class="form-control" />
-                </div>
-                <div class="form-outline mb-4">
-                    <input type="password" id="password" placeholder="Password" class="form-control" />
-                </div>
-                <button type="button" id="logBtn" class="btn btn-primary btn-block mb-4">Log in</button>
-                <div id="errordiv"></div>
+                <p>You are logged in</p>
+                <div id="myInfo"></div>
             </div>
             <div class="col-md"></div>
         </div>
     </div>
     </div>
 </body>
-<script src="/public/login.js"></script>
+<script src="/private/index.js"></script>
 
 </html>
