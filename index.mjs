@@ -3,7 +3,6 @@ import axios from "axios";
 import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
 import util from "util";
-import { dirname } from "path";
 
 const app = express();
 const port = 8102;
