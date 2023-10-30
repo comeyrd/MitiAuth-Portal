@@ -93,16 +93,24 @@ app.post("/logout", async (req, res) => {
 
 app.post("/account/getMyInfo", requireAuth, async (req, res) => {
   const mapiToken = req.cookies.mapiTok;
-  const response = await axios.post(MAPIURL + "/account/get-info", {
-    token: mapiToken,
-  });
-  if (response.data.Response === "Ok") {
-    res.status(200).json({
-      Response: "Ok",
-      data: response.data.data,
+  try {
+    const response = await axios.post(MAPIURL + "/accout/get-info", {
+      token: mapiToken,
     });
-  } else {
-    res.status(500).json({ Response: "Error" });
+    if (response.data.Response === "Ok") {
+      res.status(200).json({
+        Response: "Ok",
+        data: response.data.data,
+      });
+    } else {
+      res.status(500).json({ Response: "Error" });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      Response: "Api Error",
+      data: { message: error.message },
+    });
   }
 });
 app.use("/private", requireAuth, express.static("private"));
