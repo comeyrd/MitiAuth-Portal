@@ -1,49 +1,231 @@
-<!-- index.html -->
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 
 <head>
+    <title>Miti Portal</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- Bootstrap core CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-        crossorigin="anonymous"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <style>
-        .logout-button {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-        }
-    </style>
-
-    <meta charset="UTF-8">
-    <title>MitiAuth Portal</title>
-
+    <link rel="stylesheet" href="./css/index.css">
 </head>
 
 <body>
-    <button id="logoutButton" class="btn btn-danger logout-button">Logout</button>
-    <div class="container-fluid">
-        <div class="row justify-content-center">
-            <div class="col-3"></div>
-            <div class="col-6 text-center">
-                <h1>MitiAuth Portal</h1>
+
+    <div class="wrapper d-flex align-items-stretch">
+        <nav id="sidebar">
+            <div class="custom-menu">
+                <button type="button" id="sidebarCollapse" class="btn btn-primary">
+                    <i class="fa fa-bars"></i>
+                    <span class="sr-only">Toggle Menu</span>
+                </button>
             </div>
-            <div class="col-3"></div>
-        </div>
-        <br><br><br>
-        <div class="row justify-content-center">
-            <div class="col-md"></div>
-            <div class="col-md-3 col-12 text-center">
-                <p>You are logged in</p>
-                <div id="myInfo"></div>
+            <div class="p-4 pt-5">
+                <h1><a href="index.html" class="logo">MitiPortal</a></h1>
+                <ul class="nav nav-pills flex-column flex-grow-1 mb-auto" id="pills-tab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <a href="#" class="nav-link active customnav text-center" id="pills-home-tab"
+                            data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab"
+                            aria-controls="pills-maker" aria-selected="true">
+                            Home
+                        </a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a href="#" class="nav-link customnav text-center" id="pills-dashboard-tab"
+                            data-bs-toggle="pill" data-bs-target="#pills-dashboard" type="button" role="tab"
+                            aria-controls="pills-dashboard" aria-selected="true">
+                            Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="nav-link customnav text-center" id="pills-review-tab" data-bs-toggle="pill"
+                            data-bs-target="#pills-review" type="button" role="tab" aria-controls="pills-review"
+                            aria-selected="true">
+                            Review
+                        </a>
+                    </li>
+                </ul>
+                <hr>
+
+                <div class="dropdown">
+                    <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
+                        id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+                        <strong id="username"></strong>
+                    </a>
+                    <ul class="dropdown-menu custom-dropdown text-small shadow" aria-labelledby="dropdownUser1">
+                        <li><a class="dropdown-item" href="#" id="profileLink">Profile</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item" id="logoutButton" href="">Log out</a></li>
+                    </ul>
+                </div>
             </div>
-            <div class="col-md"></div>
+        </nav>
+
+        <!-- Page Content  -->
+        <div id="content" class="p-4 p-md-5 pt-5">
+            <div id="maincontent">
+                <div class="tab-content" id="pills-tabContent">
+                    <div class="tab-pane fade show active" id="pills-home" role="tabpanel"
+                        aria-labelledby="pills-home-tab">
+                        <h2 class="mb-4">The Portal of Miti</h2>
+                        <p>MitiPortal is a revolutionary platform that stands out for its versatility, accessibility,
+                            and
+                            user-friendly design. Its adaptability to various devices and screen sizes ensures that
+                            users
+                            can
+                            seamlessly access and utilize its features from their desktop computers, tablets, or
+                            smartphones.
+                            This
+                            inclusivity makes it a standout solution for a wide range of users, enhancing productivity
+                            and
+                            providing
+                            a smooth experience regardless of the device being used.
+                        </p>
+                        <p>
+                            MitiPortal's intuitive design is another standout feature. Its user interface is designed
+                            with
+                            simplicity and efficiency in mind, ensuring users can navigate and access essential tools
+                            with
+                            ease.
+                            This straightforward approach reduces the learning curve, making it accessible to users of
+                            all
+                            levels of
+                            technical expertise. Furthermore, MitiPortal's robust feature set offers tools for an array
+                            of
+                            applications, from document management to project collaboration, truly making it a one-stop
+                            solution
+                            for
+                            professionals and businesses.
+                        </p>
+                        <p>
+                            In addition, MitiPortal's strong focus on security and data protection adds to its appeal.
+                            Users
+                            can
+                            trust that their sensitive information and documents are safeguarded, and the platform
+                            offers
+                            advanced
+                            encryption and authentication methods. With MitiPortal, you have a dependable, accessible,
+                            and
+                            secure
+                            solution that can significantly enhance your workflow and productivity.</p>
+                    </div>
+                </div>
+                <div class="tab-content" id="pills-tabContent">
+                    <div class="tab-pane fade show" id="pills-dashboard" role="tabpanel"
+                        aria-labelledby="pills-dashboard-tab">
+                        <h2 class="mb-4">MitiPortal Dashboard: A Gateway to Empowerment</h2>
+                        <p>
+                            The MitiPortal Dashboard is a dynamic and user-centric platform designed to empower
+                            administrators and users with a centralized hub for effective management and navigation.
+                            This
+                            dashboard provides a comprehensive view of essential tools and features that drive
+                            MitiPortal's
+                            capabilities. Upon logging in, users are welcomed by a sleek and intuitive interface that
+                            streamlines access to crucial functionalities.
+                        </p>
+                        <h3 class="mb-4"> Streamlined User Management
+                        </h3>
+
+                        <p></p>The MitiPortal Dashboard excels in user management. Administrators can seamlessly manage
+                        user
+                        accounts, making it easy to add, modify, or remove user profiles. This ensures a secure and
+                        organized user environment. Furthermore, administrators can oversee permissions, roles, and
+                        account settings, granting them full control over the platform's security and functionality.</p>
+                        <h3 class="mb-4"> Enhanced Password Management
+                        </h3>
+
+                        <p>
+                            Password management is simplified through the dashboard, enabling users to change or reset
+                            their
+                            passwords effortlessly. Security-conscious practices are encouraged, and users can update
+                            their
+                            login credentials to maintain a high level of data protection.</p>
+                        <h3 class="mb-4"> Multi-Faceted User Interface
+                        </h3>
+
+                        <p>
+                            With an array of widgets and data visualizations, the MitiPortal Dashboard brings users a
+                            plethora of insights. It offers a comprehensive view of the user base and their activities,
+                            enhancing the capacity to make informed decisions.
+                            The MitiPortal Dashboard is not just a gateway; it's an engine for effective control,
+                            ensuring
+                            smooth navigation and user empowerment at every turn.</p>
+                    </div>
+                </div>
+                <div class="tab-content" id="pills-tabContent">
+                    <div class="tab-pane fade show" id="pills-review" role="tabpanel"
+                        aria-labelledby="pills-review-tab">
+                        <h2 class="mb-4">Please Review</h2>
+                        <p>Taking a moment to review your experiences and insights is invaluable. It allows you to
+                            reflect
+                            on your journey, gain fresh perspectives, and make informed decisions. Whether it's a
+                            project, a
+                            personal growth process, or simply the events of the day, reviewing not only helps you
+                            recognize
+                            accomplishments but also reveals areas for growth and learning. So, seize the opportunity to
+                            review, as it's the compass that guides you towards a better, more purposeful path forward.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div id="profilecontent" style="display: none;">
+                <div class="row ">
+                    <div class="col-lg-4">
+                        <div class="card mb-4">
+                            <div class="card-body text-center">
+                                <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp"
+                                    alt="avatar" class="rounded-circle img-fluid" style="width: 150px;">
+                                <h5 class="my-3" id="profileName">John Smith</h5>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-8">
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <p class="mb-0">Full Name</p>
+                                    </div>
+                                    <div class="col-sm-9">
+                                        <p class="text-muted mb-0" id="profileName2">Johnatan Smith</p>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <p class="mb-0">Username</p>
+                                    </div>
+                                    <div class="col-sm-9">
+                                        <p class="text-muted mb-0" id="profileUsername">jsmith2</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+    <script src="./js/index.js"></script>
 </body>
-<script src="/private/index.js"></script>
 
 </html>

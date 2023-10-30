@@ -1,0 +1,211 @@
+body {
+    font-family: "Lato", Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.8;
+    font-weight: normal;
+    background: #f8f9fd;
+    color: gray;
+  }
+  
+  .bg-primary {
+    background: #8d448b !important;
+  }
+  
+  a {
+    -webkit-transition: .3s all ease;
+    -o-transition: .3s all ease;
+    transition: .3s all ease;
+    color: #8d448b;
+  }
+  
+  a:hover,
+  a:focus {
+    text-decoration: none !important;
+    outline: none !important;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+  }
+  
+  
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  .h1,
+  .h2,
+  .h3,
+  .h4,
+  .h5 {
+    line-height: 1.5;
+    font-weight: 400;
+    font-family: "Poppins", Arial, sans-serif;
+    color: #000;
+  }
+  
+  .ftco-section {
+    padding: 7em 0;
+  }
+  
+  .ftco-no-pt {
+    padding-top: 0;
+  }
+  
+  .ftco-no-pb {
+    padding-bottom: 0;
+  }
+  
+  
+  
+  .navbar {
+    padding: 15px 10px;
+    background: #fff;
+    border: none;
+    border-radius: 0;
+    margin-bottom: 40px;
+    -webkit-box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  
+  .wrapper {
+    width: 100%;
+  }
+  
+  #sidebar {
+    min-width: 250px;
+    max-width: 250px;
+    background: #8d448b;
+    color: #fff;
+    -webkit-transition: all 0.3s;
+    -o-transition: all 0.3s;
+    transition: all 0.3s;
+    position: relative;
+  }
+  
+  #sidebar .h6 {
+    color: #fff;
+  }
+  
+  #sidebar.active {
+    margin-left: -250px;
+  }
+  
+  #sidebar.active .custom-menu {
+    margin-right: -50px;
+  }
+  
+  #sidebar h1 {
+    margin-bottom: 20px;
+    font-weight: 700;
+  }
+  
+  #sidebar h1 .logo {
+    color: #fff;
+  }
+  
+  @media (max-width: 991.98px) {
+    #sidebar {
+      margin-left: -250px;
+    }
+  
+    #sidebar.active {
+      margin-left: 0;
+    }
+  
+    #sidebar .custom-menu {
+      margin-right: -50px !important;
+      top: 10px !important;
+    }
+  }
+  
+  #sidebar .custom-menu {
+    display: inline-block;
+    position: absolute;
+    top: 20px;
+    right: 0;
+    margin-right: -20px;
+    -webkit-transition: 0.3s;
+    -o-transition: 0.3s;
+    transition: 0.3s;
+  }
+  
+  @media (prefers-reduced-motion: reduce) {
+    #sidebar .custom-menu {
+      -webkit-transition: none;
+      -o-transition: none;
+      transition: none;
+    }
+  }
+  
+  #sidebar .custom-menu .btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+  }
+  
+  #sidebar .custom-menu .btn.btn-primary {
+    background: #8d448b;
+    border-color: #8d448b;
+  }
+  
+  #sidebar .custom-menu .btn.btn-primary:hover,
+  #sidebar .custom-menu .btn.btn-primary:focus {
+    background: #8d448b !important;
+    border-color: #8d448b !important;
+  }
+  
+  @media (max-width: 991.98px) {
+    #sidebarCollapse span {
+      display: none;
+    }
+  }
+  
+  #content {
+    width: 100%;
+    padding: 0;
+    min-height: 100vh;
+    -webkit-transition: all 0.3s;
+    -o-transition: all 0.3s;
+    transition: all 0.3s;
+  }
+  
+  
+  .footer p {
+    color: rgba(255, 255, 255, 0.5);
+  }
+  
+  
+  .nav-link.active.customnav {
+    background-color: white;
+    /* Change the background color to red (you can use any color you prefer) */
+    color: #8d448b!important;
+    /* Change the text color to white (or any other color you prefer) */
+  }
+  
+  .nav-link.customnav {
+    background-color: #8d448b;
+    /* Change the background color to red (you can use any color you prefer) */
+    color: #ffffff;
+    border-bottom:0px!important;
+    /* Change the text color to white (or any other color you prefer) */
+  }
+  
+  .dropdown-toggle { outline: 0; }
+  
+  .custom-dropdown {
+    --bs-dropdown-color: #dee2e6;
+    --bs-dropdown-bg: #934691;
+    --bs-dropdown-border-color: var(--bs-border-color-translucent);
+    --bs-dropdown-box-shadow: ;
+    --bs-dropdown-link-color: #dee2e6;
+    --bs-dropdown-link-hover-color: #fff;
+    --bs-dropdown-divider-bg: var(--bs-border-color-translucent);
+    --bs-dropdown-link-hover-bg: rgba(0, 0, 0,0);
+    --bs-dropdown-link-active-color: #fff;
+    --bs-dropdown-link-active-bg: #8d448b;
+    --bs-dropdown-link-disabled-color: #adb5bd;
+    --bs-dropdown-header-color: #adb5bd;
+    min-width: auto; /* Disable the default min-width */
+    padding: 0.5rem 1rem; /* Add padding on both sides */
+  }
