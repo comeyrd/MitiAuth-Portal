@@ -42,8 +42,6 @@ logoutButton.addEventListener("click", function (event) {
     });
 });
 const profileName = document.getElementById("profileName");
-const profileName2 = document.getElementById("profileName2");
-const profileUsername = document.getElementById("profileUsername");
 
 function updateInfo() {
   fetch("/account/getMyInfo", {
@@ -57,9 +55,7 @@ function updateInfo() {
     .then((data) => {
       console.log(data.data.userInfo);
       myInfo.textContent = data.data.uInfo.username;
-      profileName.textContent = data.data.uInfo.name;
-      profileUsername.textContent = data.data.uInfo.username;
-      profileName2.textContent = data.data.uInfo.name;
+      loadProfile(data.data.uInfo);
     })
     .catch((error) => {
       console.log(error);
@@ -68,6 +64,59 @@ function updateInfo() {
 }
 
 updateInfo();
+
+function loadProfile(uInfo) {
+  const profileName = document.getElementById("profileName");
+  profileName.textContent = uInfo.name;
+  const profileContainer = document.getElementById("user-info-div");
+  // Clear the existing content in the profile container
+  profileContainer.innerHTML = "";
+
+  for (const key in uInfo) {
+    if (uInfo.hasOwnProperty(key)) {
+      const value = uInfo[key];
+
+      // Create a new row element
+      const row = document.createElement("div");
+      row.classList.add("row");
+
+      // Create a column for the label (col-sm-3)
+      const labelColumn = document.createElement("div");
+      labelColumn.classList.add("col-sm-3");
+
+      // Create a <p> element for the label text
+      const label = document.createElement("p");
+      label.classList.add("mb-0");
+      label.textContent = key;
+
+      labelColumn.appendChild(label);
+
+      // Create a column for the value (col-sm-9)
+      const valueColumn = document.createElement("div");
+      valueColumn.classList.add("col-sm-9");
+
+      // Create a <p> element for the value text
+      const valueElement = document.createElement("p");
+      valueElement.classList.add("text-muted", "mb-0");
+      valueElement.textContent = value;
+
+      valueColumn.appendChild(valueElement);
+
+      // Add the columns to the row
+      row.appendChild(labelColumn);
+      row.appendChild(valueColumn);
+
+      // Append the row to the profile container
+      profileContainer.appendChild(row);
+
+      // Add a horizontal line (hr) after each entry
+      if (key !== Object.keys(uInfo)[Object.keys(uInfo).length - 1]) {
+        const separator = document.createElement("hr");
+        profileContainer.appendChild(separator);
+      }
+    }
+  }
+}
 
 const profileLink = document.getElementById("profileLink"); // Assuming you have an element with id "profileLink"
 const profileSection = document.getElementById("profilecontent"); // Assuming you have an element with id "profile"
