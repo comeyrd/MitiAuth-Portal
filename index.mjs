@@ -47,7 +47,7 @@ app.post("/login", async (req, res) => {
   const mapiToken = req.cookies.mapiTok;
   if (!(await checkValidity(mapiToken, res))) {
     const { login, password } = req.body;
-    const response = await axios.post(MAPIURL + "/login", {
+    const response = await axios.post(MAPIURL + "/auth/login", {
       login: login,
       password: password,
     });
@@ -74,7 +74,7 @@ app.post("/login", async (req, res) => {
 app.post("/logout", async (req, res) => {
   const mapiToken = req.cookies.mapiTok;
   if (mapiToken) {
-    const response = await axios.post(MAPIURL + "/logout", {
+    const response = await axios.post(MAPIURL + "/auth/logout", {
       token: mapiToken,
     });
     if (response.data.Response === "Ok") {
@@ -93,7 +93,7 @@ app.post("/logout", async (req, res) => {
 
 app.post("/account/getMyInfo", requireAuth, async (req, res) => {
   const mapiToken = req.cookies.mapiTok;
-  const response = await axios.post(MAPIURL + "/getMyInfo", {
+  const response = await axios.post(MAPIURL + "/account/get-info", {
     token: mapiToken,
   });
   if (response.data.Response === "Ok") {
@@ -113,7 +113,7 @@ app.listen(port, () => {
 
 async function checkValidity(mapiToken, res) {
   if (mapiToken) {
-    const response = await axios.post(MAPIURL + "/validate", {
+    const response = await axios.post(MAPIURL + "/auth/validate", {
       token: mapiToken,
     });
     return response.data.Response === "Ok";
