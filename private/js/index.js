@@ -17,7 +17,8 @@
 const logoutButton = document.getElementById("logoutButton");
 const myInfo = document.getElementById("username");
 
-logoutButton.addEventListener("click", () => {
+logoutButton.addEventListener("click", function (event) {
+  event.preventDefault(); // Prevent the link from navigating
   fetch("/logout", {
     method: "POST",
     headers: {
