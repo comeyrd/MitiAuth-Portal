@@ -209,3 +209,55 @@ body {
     min-width: auto; /* Disable the default min-width */
     padding: 0.5rem 1rem; /* Add padding on both sides */
   }
+
+
+.btn {
+  cursor: pointer;
+  border-radius: 40px;
+  -webkit-box-shadow: none !important;
+  box-shadow: none !important;
+  font-size: 15px;
+}
+
+.btn:hover,
+.btn:active,
+.btn:focus {
+  outline: none;
+}
+
+.btn.btn-primary {
+  background: #8d448b !important;
+  border: 1px solid #8d448b !important;
+  color: #fff !important;
+}
+
+.btn.btn-primary:hover {
+  border: 1px solid #8d448b;
+  background: transparent;
+  color: #8d448b;
+}
+
+.btn.btn-primary.btn-outline-primary {
+  border: 1px solid #8d448b;
+  background: transparent;
+  color: #8d448b;
+}
+
+.btn.btn-primary.btn-outline-primary:hover {
+  border: 1px solid transparent;
+  background: #8d448b;
+  color: #fff;
+}
+
+.form-group {
+  position: relative;
+  padding-bottom: 10px;
+}
+
+.form-group .submit {
+  position: absolute;
+  top: 25px;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+}

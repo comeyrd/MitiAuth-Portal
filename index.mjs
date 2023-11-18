@@ -7,7 +7,8 @@ import util from "util";
 const app = express();
 const port = 8102;
 
-const MAPIURL = "https://fmapi.ceyraud.com";
+//const MAPIURL = "https://fmapi.ceyraud.com";
+const MAPIURL = "http://localhost:8101";
 
 app.use(bodyParser.json());
 app.use(cookieParser());
@@ -37,7 +38,20 @@ const requireAuth = async (req, res, next) => {
     res.redirect("/public/login.html"); // User is not authenticated, redirect to login page
   }
 };
-app.use("/public", express.static("public"));
+
+const isAuth = async (req, res, next) => {
+  const mapiToken = req.cookies.mapiTok;
+  if (mapiToken) {
+    if (await checkValidity(mapiToken)) {
+      res.redirect("/"); // User is not authenticated, redirect to login page
+    } else {
+      next();
+    }
+  } else {
+    next();
+  }
+};
+app.use("/public", isAuth, express.static("public"));
 
 app.get("/", requireAuth, (req, res) => {
   res.redirect("/private");
@@ -113,10 +127,10 @@ app.post("/account/getMyInfo", requireAuth, async (req, res) => {
     });
   }
 });
-app.post("/account/get-scheme", requireAuth, async (req, res) => {
+app.get("/account/get-scheme", requireAuth, async (req, res) => {
   const mapiToken = req.cookies.mapiTok;
   try {
-    const response = await axios.get(MAPIURL + "/account/get-scheme", {
+    const response = await axios.post(MAPIURL + "/account/get-scheme", {
       token: mapiToken,
     });
     if (response.data.Response === "Ok") {

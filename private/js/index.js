@@ -16,7 +16,7 @@
 
 const logoutButton = document.getElementById("logoutButton");
 const myInfo = document.getElementById("username");
-
+let scheme;
 logoutButton.addEventListener("click", function (event) {
   event.preventDefault(); // Prevent the link from navigating
   fetch("/logout", {
@@ -64,7 +64,7 @@ function updateInfo() {
 }
 
 updateInfo();
-
+updateUserCreationFields();
 function loadProfile(uInfo) {
   const profileName = document.getElementById("profileName");
   profileName.textContent = uInfo.name;
@@ -140,4 +140,64 @@ navButtonsContainer.addEventListener("click", function (event) {
     profileSection.style.display = "none";
     mainSection.style.display = "block";
   }
+});
+
+function addCreateInfo(key, field) {
+  const dynamicFieldsContainer = document.getElementById(
+    "dynamic-fields-container"
+  );
+  const input = document.createElement("input");
+  input.type = field.type || "text"; // Use the specified type or default to 'text'
+  input.name = key;
+  input.className = "form-control rounded-left";
+  input.placeholder = field.pretty || key; // Use the pretty name if available, otherwise use the key
+  input.required = true; // Assuming you want these fields to be required
+
+  const hr = document.createElement("hr");
+  dynamicFieldsContainer.appendChild(input);
+  dynamicFieldsContainer.appendChild(hr);
+}
+
+function updateUserCreationFields() {
+  fetch("/account/get-scheme")
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.Response === "Ok" && data.data && data.data.scheme) {
+        Object.keys(data.data.scheme).forEach((key) => {
+          const field = data.data.scheme[key];
+          addCreateInfo(key, field);
+        });
+      }
+      scheme = data.data;
+    })
+    .catch((error) => {
+      console.error("Error fetching API data:", error);
+    });
+}
+
+// Event listener for form submission
+const loginForm = document.querySelector(".login-form"); // Get the form element
+loginForm.addEventListener("submit", (event) => {
+  event.preventDefault(); // Prevent the default form submission
+  // Collect form data
+  const formData = new FormData(loginForm);
+  const formObject = {};
+  console.log(formData);
+  formData.forEach((value, key) => {
+    formObject[key] = value;
+  });
+  // Create the info object dynamically based on the scheme
+  const info = {};
+  Object.keys(scheme.scheme).forEach((key) => {
+    info[key] = formObject[key];
+  });
+  // Create the payload to send in the POST request
+  const payload = {
+    login: formObject.login,
+    pass: formObject.password,
+    info: info,
+    scheme: scheme.scheme,
+  };
+  console.log(payload);
+  //TODO
 });

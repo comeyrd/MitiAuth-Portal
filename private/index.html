@@ -49,7 +49,7 @@
                         <a href="#" class="nav-link customnav text-center" id="pills-review-tab" data-bs-toggle="pill"
                             data-bs-target="#pills-review" type="button" role="tab" aria-controls="pills-review"
                             aria-selected="true">
-                            Review
+                            Add Users
                         </a>
                     </li>
                 </ul>
@@ -165,16 +165,33 @@
                 <div class="tab-content" id="pills-tabContent">
                     <div class="tab-pane fade show" id="pills-review" role="tabpanel"
                         aria-labelledby="pills-review-tab">
-                        <h2 class="mb-4">Please Review</h2>
-                        <p>Taking a moment to review your experiences and insights is invaluable. It allows you to
-                            reflect
-                            on your journey, gain fresh perspectives, and make informed decisions. Whether it's a
-                            project, a
-                            personal growth process, or simply the events of the day, reviewing not only helps you
-                            recognize
-                            accomplishments but also reveals areas for growth and learning. So, seize the opportunity to
-                            review, as it's the compass that guides you towards a better, more purposeful path forward.
-                        </p>
+                        <h2 class="mb-4">Account Creation</h2>
+                        <div class="row ">
+                            <div class="col-lg-8">
+                                <div class="card mb-4">
+                                    <div class="card-body">
+                                        <form class="login-form">
+                                            <div class="form-group">
+                                                <input type="text" name="login" class="form-control rounded-left"
+                                                    placeholder="Username" required>
+                                            </div>
+                                            <hr>
+                                            <div class="form-group d-flex">
+                                                <input type="password" name="password" class="form-control rounded-left"
+                                                    placeholder="Password" required>
+                                            </div>
+                                            <hr>
+                                            <div id="dynamic-fields-container"></div>
+
+                                            <div class="form-group">
+                                                <button type="submit" id="logBtn"
+                                                    class="btn btn-primary rounded submit p-3 px-5">Submit</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
