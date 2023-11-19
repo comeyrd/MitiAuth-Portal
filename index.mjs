@@ -149,6 +149,28 @@ app.get("/account/get-scheme", requireAuth, async (req, res) => {
     });
   }
 });
+app.post("/account/create", requireAuth, async (req, res) => {
+  const mapiToken = req.cookies.mapiTok;
+  try {
+    const response = await axios.post(MAPIURL + "/auth/register", {
+      token: mapiToken,
+      create: req.body,
+    });
+    if (response.data.Response === "Ok") {
+      res.status(200).json({
+        Response: "Ok",
+        data: response.data.data,
+      });
+    } else {
+      res.status(500).json({ Response: "Error" });
+    }
+  } catch (error) {
+    res.status(500).json({
+      Response: "Api Error",
+      data: { message: error.message, api: error.response.data.data.type },
+    });
+  }
+});
 app.use("/private", requireAuth, express.static("private"));
 
 app.listen(port, () => {

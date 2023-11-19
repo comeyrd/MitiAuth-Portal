@@ -154,8 +154,8 @@ function addCreateInfo(key, field) {
   input.required = true; // Assuming you want these fields to be required
 
   const hr = document.createElement("hr");
-  dynamicFieldsContainer.appendChild(input);
   dynamicFieldsContainer.appendChild(hr);
+  dynamicFieldsContainer.appendChild(input);
 }
 
 function updateUserCreationFields() {
@@ -192,12 +192,31 @@ loginForm.addEventListener("submit", (event) => {
     info[key] = formObject[key];
   });
   // Create the payload to send in the POST request
-  const payload = {
+  const payload = JSON.stringify({
     login: formObject.login,
     pass: formObject.password,
     info: info,
     scheme: scheme.scheme,
-  };
+  });
   console.log(payload);
-  //TODO
+  fetch("/account/create", {
+    method: "POST",
+    body: payload,
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.Response !== "Ok") {
+        console.log("error");
+        console.log(data);
+      } else {
+        console.log("good");
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 });
