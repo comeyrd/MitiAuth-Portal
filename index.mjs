@@ -120,7 +120,6 @@ app.post("/account/getMyInfo", requireAuth, async (req, res) => {
       res.status(500).json({ Response: "Error" });
     }
   } catch (error) {
-    console.log(error);
     res.status(500).json({
       Response: "Api Error",
       data: { message: error.message },
@@ -142,7 +141,6 @@ app.get("/account/get-scheme", requireAuth, async (req, res) => {
       res.status(500).json({ Response: "Error" });
     }
   } catch (error) {
-    console.log(error);
     res.status(500).json({
       Response: "Api Error",
       data: { message: error.message },
