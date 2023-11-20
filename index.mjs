@@ -7,8 +7,8 @@ import util from "util";
 const app = express();
 const port = 8102;
 
-//const MAPIURL = "https://fmapi.ceyraud.com";
-const MAPIURL = "http://localhost:8101";
+const MAPIURL = "https://fmapi.ceyraud.com";
+//const MAPIURL = "http://localhost:8101";
 
 app.use(bodyParser.json());
 app.use(cookieParser());
