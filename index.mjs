@@ -12,6 +12,8 @@ const MAPIURL = "https://fmapi.ceyraud.com";
 
 app.use(bodyParser.json());
 app.use(cookieParser());
+app.set("view engine", "ejs");
+
 const cookieSett = {
   maxAge: 3 * 24 * 60 * 60 * 1000,
   secure: true,
@@ -54,7 +56,7 @@ const isAuth = async (req, res, next) => {
 app.use("/public", isAuth, express.static("public"));
 
 app.get("/", requireAuth, (req, res) => {
-  res.redirect("/private");
+  res.redirect("/portal");
 });
 
 app.post("/login", async (req, res) => {
@@ -104,50 +106,33 @@ app.post("/logout", async (req, res) => {
     res.status(500).json({ Response: "Error" });
   }
 });
-
-app.post("/account/getMyInfo", requireAuth, async (req, res) => {
-  const mapiToken = req.cookies.mapiTok;
+async function getInfo(token) {
   try {
     const response = await axios.post(MAPIURL + "/account/get-info", {
-      token: mapiToken,
+      token: token,
     });
     if (response.data.Response === "Ok") {
-      res.status(200).json({
-        Response: "Ok",
-        data: response.data.data,
-      });
+      return response.data.data;
     } else {
-      res.status(500).json({ Response: "Error" });
+      showObj(response.data);
     }
   } catch (error) {
-    res.status(500).json({
-      Response: "Api Error",
-      data: { message: error.message },
-    });
+    throw error;
   }
-});
-app.get("/account/get-scheme", requireAuth, async (req, res) => {
+}
+
+app.use("/private", requireAuth, express.static("private"));
+/*app.use("/private/css", requireAuth, express.static("private"));*/
+
+app.get("/portal/", requireAuth, async (req, res) => {
   const mapiToken = req.cookies.mapiTok;
   try {
-    const response = await axios.post(MAPIURL + "/account/get-scheme", {
-      token: mapiToken,
-    });
-    if (response.data.Response === "Ok") {
-      res.status(200).json({
-        Response: "Ok",
-        data: response.data.data,
-      });
-    } else {
-      res.status(500).json({ Response: "Error" });
-    }
+    const uInfo = await getInfo(mapiToken);
+    res.render("index", uInfo);
   } catch (error) {
-    res.status(500).json({
-      Response: "Api Error",
-      data: { message: error.message },
-    });
+    showObj(error);
   }
 });
-app.use("/private", requireAuth, express.static("private"));
 
 app.listen(port, () => {
   console.log(`Server is running on port http://localhost:${port}`);

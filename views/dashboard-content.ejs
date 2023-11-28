@@ -1,0 +1,85 @@
+<div class="card mb-4">
+    <div class="card-body">
+        <h1>Caliel Cookie Update</h1>
+
+        <form>
+            <div class="mb-3">
+                <label for="cookie" class="form-label">Cookie:</label>
+                <input type="password" id="cookie" name="cookie" class="form-control" required />
+            </div>
+            <hr>
+            <div class="mb-3">
+                <label for="mail" class="form-label">Mail:</label>
+                <input type="text" id="mail" name="mail" class="form-control" required />
+            </div>
+            <hr>
+
+            <div class="mb-3">
+                <label class="form-label">Days:</label>
+
+                <div class="form-check form-check-inline">
+                    <input type="checkbox" id="mon" name="days" value="Mon" class="form-check-input" />
+                    <label for="mon" class="form-check-label">Mon</label>
+                </div>
+
+                <div class="form-check form-check-inline">
+                    <input type="checkbox" id="tue" name="days" value="Tue" class="form-check-input" />
+                    <label for="tue" class="form-check-label">Tue</label>
+                </div>
+
+                <div class="form-check form-check-inline">
+                    <input type="checkbox" id="wed" name="days" value="Wed" class="form-check-input" />
+                    <label for="wed" class="form-check-label">Wed</label>
+                </div>
+
+                <div class="form-check form-check-inline">
+                    <input type="checkbox" id="thu" name="days" value="Thu" class="form-check-input" />
+                    <label for="thu" class="form-check-label">Thu</label>
+                </div>
+
+                <div class="form-check form-check-inline">
+                    <input type="checkbox" id="fri" name="days" value="Fri" class="form-check-input" />
+                    <label for="fri" class="form-check-label">Fri</label>
+                </div>
+
+                <div class="form-check form-check-inline">
+                    <input type="checkbox" id="sat" name="days" value="Sat" class="form-check-input" />
+                    <label for="sat" class="form-check-label">Sat</label>
+                </div>
+
+                <div class="form-check form-check-inline">
+                    <input type="checkbox" id="sun" name="days" value="Sun" class="form-check-input" />
+                    <label for="sun" class="form-check-label">Sun</label>
+                </div>
+            </div>
+
+            <button type="button" onclick="updateCookie()" class="btn btn-primary">Save Changes</button>
+        </form>
+        <script>
+            function updateCookie() {
+                const cookieValue = document.getElementById("cookie").value;
+                const mailValue = document.getElementById("mail").value;
+                const daysValues = getSelectedDays();
+
+                const formData = {
+                    cookie: cookieValue,
+                    mail: mailValue,
+                    days: daysValues,
+                };
+
+                console.log(formData);
+            }
+
+            function getSelectedDays() {
+                const checkboxes = document.getElementsByName("days");
+                const selectedDays = [];
+
+                checkboxes.forEach((checkbox) => {
+                    if (checkbox.checked) {
+                        selectedDays.push(checkbox.value);
+                    }
+                });
+                return selectedDays;
+            }</script>
+    </div>
+</div>
