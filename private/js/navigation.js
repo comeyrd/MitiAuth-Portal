@@ -21,19 +21,3 @@ navButtonsContainer.addEventListener("click", function (event) {
     mainSection.style.display = "block";
   }
 });
-
-<li class="nav-item" role="presentation">
-  <a
-    href="#"
-    class="nav-link active customnav text-center"
-    id="pills-home-tab"
-    data-bs-toggle="pill"
-    data-bs-target="#pills-home"
-    type="button"
-    role="tab"
-    aria-controls="pills-maker"
-    aria-selected="true"
-  >
-    Home
-  </a>
-</li>;
