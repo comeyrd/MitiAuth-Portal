@@ -3,6 +3,9 @@ import axios from "axios";
 import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
 import util from "util";
+import mitiAccount from "miti-account";
+import mitiAuth from "miti-auth";
+import mitiSettings from "miti-settings";
 
 const app = express();
 const port = 8102;
