@@ -42,11 +42,11 @@ function loadProfile() {
     headers: { "Content-Type": "application/json" },
     credentials: "include",
   })
-    .then((response) => response.json())
-    .then((data) => {
-      console.log(data.data.userInfo);
-      myInfo.textContent = data.data.uInfo.username;
-      updateProfile(data.data.uInfo);
+    .then((http) => http.json())
+    .then((response) => {
+      console.log(response);
+      myInfo.textContent = response.data.username;
+      updateProfile(response.data);
     })
     .catch((error) => {
       console.log(error);
