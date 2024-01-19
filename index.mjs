@@ -3,15 +3,13 @@ import axios from "axios";
 import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
 import util from "util";
-import mitiAccount from "miti-account";
-import mitiAuth from "miti-auth";
-import mitiSettings from "miti-settings";
+import Acontrol from "./acontrol.mjs";
 
 const app = express();
 const port = 8102;
 
-const MAPIURL = "https://fmapi.ceyraud.com";
-//const MAPIURL = "http://localhost:8101";
+const acontrol = Acontrol();
+
 
 app.use(bodyParser.json());
 app.use(cookieParser());
@@ -64,23 +62,12 @@ app.post("/login", async (req, res) => {
   const mapiToken = req.cookies.mapiTok;
   if (!(await checkValidity(mapiToken, res))) {
     const { login, password } = req.body;
-    const response = await axios.post(MAPIURL + "/auth/login", {
-      login: login,
-      password: password,
+    const response = await acontrol.login(login,password);
+    res.cookie("mapiTok", response.token, cookieSett);
+    res.status(200).json({
+      Response: "Ok",
+      data: { message: "Logged In" },
     });
-
-    if (response.data.Response === "Ok") {
-      res.cookie("mapiTok", response.data.data.token, cookieSett);
-      res.status(200).json({
-        Response: "Ok",
-        data: { message: "Logged In" },
-      });
-    } else {
-      res.status(500).json({
-        Response: "Api Error",
-        data: { message: response.data.data.type },
-      });
-    }
   } else {
     res.status(200).json({
       Response: "Ok",
@@ -88,22 +75,17 @@ app.post("/login", async (req, res) => {
     });
   }
 });
+
 app.post("/logout", async (req, res) => {
   const mapiToken = req.cookies.mapiTok;
   if (mapiToken) {
-    const response = await axios.post(MAPIURL + "/auth/logout", {
-      token: mapiToken,
-    });
-    if (response.data.Response === "Ok") {
+      await acontrol.logout(mapiToken);
       res.cookie("mapiTok", "", deleteCookie);
       res.status(200).json({
         Response: "Ok",
         data: { message: "Logged Out" },
       });
-    } else {
-      res.status(500).json({ Response: "Error" });
-    }
-  } else {
+   } else {
     res.status(500).json({ Response: "Error" });
   }
 });
@@ -111,6 +93,7 @@ app.post("/logout", async (req, res) => {
 app.post("/account/getMyInfo", requireAuth, async (req, res) => {
   const mapiToken = req.cookies.mapiTok;
   try {
+    //TODO
     const response = await axios.post(MAPIURL + "/account/get-info", {
       token: mapiToken,
     });
@@ -131,6 +114,7 @@ app.post("/account/getMyInfo", requireAuth, async (req, res) => {
 });
 app.get("/account/get-scheme", requireAuth, async (req, res) => {
   const mapiToken = req.cookies.mapiTok;
+  //TODO
   try {
     const response = await axios.post(MAPIURL + "/account/get-scheme", {
       token: mapiToken,
@@ -153,6 +137,7 @@ app.get("/account/get-scheme", requireAuth, async (req, res) => {
 app.post("/account/create", requireAuth, async (req, res) => {
   const mapiToken = req.cookies.mapiTok;
   try {
+    //TODO
     const response = await axios.post(MAPIURL + "/auth/register", {
       token: mapiToken,
       create: req.body,
@@ -180,10 +165,8 @@ app.listen(port, () => {
 
 async function checkValidity(mapiToken, res) {
   if (mapiToken) {
-    const response = await axios.post(MAPIURL + "/auth/validate", {
-      token: mapiToken,
-    });
-    return response.data.Response === "Ok";
+    const response = await acontrol.validate(mapiToken)
+    return !!(response.id);
   } else {
     return false;
   }
