@@ -8,7 +8,7 @@ import Acontrol from "./acontrol.mjs";
 const app = express();
 const port = 8102;
 
-const acontrol = Acontrol();
+const acontrol = new Acontrol();
 
 
 app.use(bodyParser.json());
@@ -29,10 +29,13 @@ const deleteCookie = {
 const requireAuth = async (req, res, next) => {
   const mapiToken = req.cookies.mapiTok;
   if (mapiToken) {
+    try{
     if (await checkValidity(mapiToken)) {
       next(); // User is authenticated, proceed to the next middleware or route
     } else {
       res.cookie("mapiTok", "", deleteCookie);
+      res.redirect("/public/login.html"); // User is not authenticated, redirect to login page
+    }}catch(error){
       res.redirect("/public/login.html"); // User is not authenticated, redirect to login page
     }
   } else {
@@ -43,10 +46,13 @@ const requireAuth = async (req, res, next) => {
 const isAuth = async (req, res, next) => {
   const mapiToken = req.cookies.mapiTok;
   if (mapiToken) {
+    try{
     if (await checkValidity(mapiToken)) {
-      res.redirect("/"); // User is not authenticated, redirect to login page
+      res.redirect("/"); // User is authed redirect to login page
     } else {
       next();
+    }}catch(error){
+        next();
     }
   } else {
     next();
@@ -93,18 +99,12 @@ app.post("/logout", async (req, res) => {
 app.post("/account/getMyInfo", requireAuth, async (req, res) => {
   const mapiToken = req.cookies.mapiTok;
   try {
-    //TODO
-    const response = await axios.post(MAPIURL + "/account/get-info", {
-      token: mapiToken,
+    const data = await acontrol.getinfo(mapiToken);
+    console.log(data);
+    res.status(200).json({
+      Response: "Ok",
+      data: {uInfo:data},
     });
-    if (response.data.Response === "Ok") {
-      res.status(200).json({
-        Response: "Ok",
-        data: response.data.data,
-      });
-    } else {
-      res.status(500).json({ Response: "Error" });
-    }
   } catch (error) {
     res.status(500).json({
       Response: "Api Error",
@@ -116,17 +116,11 @@ app.get("/account/get-scheme", requireAuth, async (req, res) => {
   const mapiToken = req.cookies.mapiTok;
   //TODO
   try {
-    const response = await axios.post(MAPIURL + "/account/get-scheme", {
-      token: mapiToken,
+    const response = await acontrol.getScheme(mapiToken);
+    res.status(200).json({
+      Response: "Ok",
+      data: response,
     });
-    if (response.data.Response === "Ok") {
-      res.status(200).json({
-        Response: "Ok",
-        data: response.data.data,
-      });
-    } else {
-      res.status(500).json({ Response: "Error" });
-    }
   } catch (error) {
     res.status(500).json({
       Response: "Api Error",
@@ -165,8 +159,13 @@ app.listen(port, () => {
 
 async function checkValidity(mapiToken, res) {
   if (mapiToken) {
+    try{
     const response = await acontrol.validate(mapiToken)
     return !!(response.id);
+    }
+    catch{
+      return false;
+    }
   } else {
     return false;
   }

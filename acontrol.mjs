@@ -11,7 +11,7 @@ import { layout } from './dblayout.mjs';
 const admined = async (req, res, next) => {
   const { token } = req.body;
   try {
-    const decoded = await auth.checkJWT(token);
+    const decoded = await this.auth.checkJWT(token);
     if (decoded.type === adminType && decoded.userId) {
       req.authData = {
         type: decoded.type,
@@ -44,8 +44,8 @@ class Acontrol {
   constructor() {
     this.pool = mysqlPool;
     this.mitiSett = new mitiSettings(layout);
-    this.auth = new mitiAuth(mysqlPool, mitiSett);
-    this.account = new mitiAccount(mysqlPool, auth, mitiSett);
+    this.auth = new mitiAuth(mysqlPool, this.mitiSett);
+    this.account = new mitiAccount(mysqlPool, this.auth, this.mitiSett);
   }
 
   async login(login,password){
@@ -54,24 +54,24 @@ class Acontrol {
   }
 
   async validate(token){
-    const decoded = await auth.checkJWT(token);
+    const decoded = await this.auth.checkJWT(token);
     if (decoded.type === layout.FUSER.id && decoded.userId) {
       return { id: decoded.userId, type: layout.FUSER.id };
     } 
   }
 
   async register(login,password){
-    const newtoken = await auth.register(login, password, layout.FUSER.id);
+    const newtoken = await this.auth.register(login, password, layout.FUSER.id);
     return { token: newtoken, expiration: this.auth.jwtExpiration };
   }
 
 async delete(token){
-  await account.delete(token);
-  await auth.delete(token);
+  await  this.account.delete(token);
+  await this.auth.delete(token);
 }
 
 async logout(token){
-  const newtoken = await auth.logout(token);
+  const newtoken = await this.auth.logout(token);
   return { token: newtoken, expiration: this.auth.logoutExpiration };
 }
 
@@ -80,16 +80,16 @@ async update(token,login,password){
 }
 
 async getinfo(token){
-  return await account.read(token);
+  return await this.account.read(token);
 }
 
 async editinfo(token,infoObj){
-  return await account.update(infoObj, token);
+  return await  this.account.update(infoObj, token);
 }
 
 async getScheme(token){
-  await account.getScheme(token);
+  return await this.account.getScheme(token);
 }
 
 }
-export { Acontrol };
+export default Acontrol;
