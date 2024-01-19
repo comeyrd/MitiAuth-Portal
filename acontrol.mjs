@@ -3,7 +3,30 @@ import mitiAuth from "miti-auth";
 import mitiSettings from "miti-settings";
 import dotenv from "dotenv";
 import mysql from "mysql2/promise";
-import { layout } from './module1.mjs';
+import { layout } from './dblayout.mjs';
+
+
+//TODO FAIRE ADMINED
+/*
+const admined = async (req, res, next) => {
+  const { token } = req.body;
+  try {
+    const decoded = await auth.checkJWT(token);
+    if (decoded.type === adminType && decoded.userId) {
+      req.authData = {
+        type: decoded.type,
+        id: decoded.userId,
+      };
+      next();
+    }
+  } catch (error) {
+    res.status(200).json({
+      Response: "Error",
+      data: { type: "Auth Error", message: error.message },
+    });
+  }
+};
+*/
 
 dotenv.config();
 const mysqlConfig = {
@@ -43,6 +66,7 @@ class Acontrol {
   }
 
 async delete(token){
+  await account.delete(token);
   await auth.delete(token);
 }
 
@@ -53,6 +77,18 @@ async logout(token){
 
 async update(token,login,password){
   await this.auth.update(token,login,password);
+}
+
+async getinfo(token){
+  return await account.read(token);
+}
+
+async editinfo(token,infoObj){
+  return await account.update(infoObj, token);
+}
+
+async getScheme(token){
+  await account.getScheme(token);
 }
 
 }
