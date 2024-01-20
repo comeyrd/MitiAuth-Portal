@@ -1,14 +1,14 @@
 import express from "express";
-import axios from "axios";
 import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
 import util from "util";
-import Acontrol from "./acontrol.mjs";
+import User from "./user.mjs";
 
 const app = express();
 const port = 8102;
 
-const acontrol = new Acontrol();
+const user = new User();
+await user.init();
 
 const mapiHandl = async (res, dataCallback) => {
   try {
@@ -83,7 +83,7 @@ app.post("/login", async (req, res) => {
   if (!(await checkValidity(mapiToken, res))) {
     const { login, password } = req.body;
     await mapiHandl(res, async () => {
-        const response = await acontrol.login(login, password);
+        const response = await user.login(login, password);
         res.cookie("mapiTok", response.token, cookieSett);
         return { message: "Logged In" };
     });
@@ -93,7 +93,7 @@ app.post("/logout", async (req, res) => {
   const mapiToken = req.cookies.mapiTok;
   if (mapiToken) {
     await mapiHandl(res,async()=>{
-      await acontrol.logout(mapiToken);
+      await user.logout(mapiToken);
       res.cookie("mapiTok", "", deleteCookie);
       return { message: "Logged Out" };
     });
@@ -105,13 +105,13 @@ app.post("/logout", async (req, res) => {
 app.post("/account/getMyInfo", requireAuth, async (req, res) => {
   const mapiToken = req.cookies.mapiTok;
     await mapiHandl(res,async()=>{
-      return await acontrol.getinfo(mapiToken);
+      return await user.getinfo(mapiToken);
     });
 });
 app.get("/account/get-scheme", requireAuth, async (req, res) => {
   const mapiToken = req.cookies.mapiTok;
   await mapiHandl(res,async()=>{
-    return await acontrol.getScheme(mapiToken);
+    return await user.getScheme(mapiToken);
   });
 });
 
@@ -124,7 +124,7 @@ app.listen(port, () => {
 async function checkValidity(mapiToken, res) {
   if (mapiToken) {
     try{
-    const response = await acontrol.validate(mapiToken)
+    const response = await user.validate(mapiToken)
     return !!(response.id);
     }
     catch{

@@ -1,9 +1,6 @@
 import mysql from "mysql2/promise";
-import MitiAccount from "miti-account";
-import MitiAuth from "miti-auth";
-import MitiSettings from "miti-settings";
+import User from "../user.mjs";
 
-import { layout } from "../dblayout.mjs";
 
 import dotenv from "dotenv";
 dotenv.config();
@@ -22,31 +19,17 @@ const mysqlConfigFirst = {
 };
 
 (async () => {
-  let mysqlPool;
   let con;
 
-  let account;
-  let auth;
   try {
     con = await mysql.createConnection(mysqlConfigFirst);
     await con.query(`DROP DATABASE mapi;`);
     await con.query(`CREATE DATABASE mapi;`);
-    mysqlPool = await mysql.createPool(mysqlConfig);
-    auth = new MitiAuth(mysqlPool, new MitiSettings(layout));
-    await auth.setupDatabase();
-    account = new MitiAccount(mysqlPool, auth, new MitiSettings(layout));
-    await auth.register(
-      process.env.ROOT_LOG,
-      process.env.ROOT_PASS,
-      layout.FUSER.id
-    );
-    const token = await auth.login(
-      process.env.ROOT_LOG,
-      process.env.ROOT_PASS,
-      layout.FUSER.id
-    );
-    await account.setupDatabase();
-    await account.create({ email: "miti@ceyraud.com", name: "Miti" }, token);
+    await con.end();
+    let user = new User();
+    await user.init();
+    await user.setupDb()
+    await user.create( process.env.ROOT_LOG,process.env.ROOT_PASS,{ email: "miti@ceyraud.com", name: "Miti" });
     console.log("Done");
   } catch (e) {
     console.error("An error occurred:", e);
@@ -54,9 +37,6 @@ const mysqlConfigFirst = {
     // Close your connections or do any other necessary cleanup here
     if (con) {
       await con.end();
-    }
-    if (mysqlPool) {
-      mysqlPool.end();
     }
     // Exit the Node.js process
     process.exit(0);
