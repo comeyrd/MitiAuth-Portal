@@ -3,6 +3,7 @@ import User from "../user.mjs";
 
 
 import dotenv from "dotenv";
+import Admin from "../admin.mjs";
 dotenv.config();
 
 const mysqlConfig = {
@@ -27,9 +28,13 @@ const mysqlConfigFirst = {
     await con.query(`CREATE DATABASE mapi;`);
     await con.end();
     let user = new User();
+    let admin = new Admin();
     await user.init();
-    await user.setupDb()
-    await user.create( process.env.ROOT_LOG,process.env.ROOT_PASS,{ email: "miti@ceyraud.com", name: "Miti" });
+    await admin.init();
+    await user.setupDb();
+    await user.create( "user","user",{ email: "user@ceyraud.com", name: "User" });
+    await admin.create( "admin","admin",{ email: "admin@ceyraud.com", name: "Admin" ,phone:"AdminAdminAdmin"});
+    await admin.create( process.env.ROOT_LOG,process.env.ROOT_PASS,{ email: "miti@ceyraud.com", name: "Miti" ,phone:"823712"});
     console.log("Done");
   } catch (e) {
     console.error("An error occurred:", e);

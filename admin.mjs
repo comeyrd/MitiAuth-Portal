@@ -1,6 +1,7 @@
 import mitiAccount from "miti-account";
 import mitiAuth from "miti-auth";
 import mitiSettings from "miti-settings";
+import mitiAdmin from "miti-admin";
 import dotenv from "dotenv";
 import mysql from "mysql2/promise";
 import { layout } from "./dblayout.mjs";
@@ -31,11 +32,10 @@ dotenv.config();
 
 const mysqlConfig = {
   host: process.env.DB_HOST,
-  ADMIN: process.env.DB_ADMIN,
+  user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE,
 };
-
 
 class Admin {
   constructor() {
@@ -46,7 +46,8 @@ class Admin {
     this.mysqlPool = await mysql.createPool(mysqlConfig);
     this.auth = new mitiAuth(this.mysqlPool, this.mitiSett);
     this.account = new mitiAccount(this.mysqlPool, this.auth, this.mitiSett);
-  }
+    this.admin = new mitiAdmin(this.mysqlPool,this.auth,this.account,this.mitiSett);
+}
 
   async login(login, password) {
     let token = await this.auth.login(login, password, layout.ADMIN.id);
@@ -97,8 +98,9 @@ class Admin {
   }
 
   async listUsers(){
-    
+    await this.admin.list(layout.USER.id);
+    await this.admin.list(layout.ADMIN.id);
   }
 
 }
-export default ADMIN;
+export default Admin;

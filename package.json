@@ -25,6 +25,7 @@
     "miti-account": "file:AccessControl/MitiAccount",
     "miti-auth": "file:AccessControl/MitiAuth",
     "miti-settings": "file:AccessControl/MitiSettings",
+    "miti-admin": "file:AccessControl/MitiAdmin",
     "mysql2": "^3.7.1"
   },
   "devDependencies": {

@@ -3,12 +3,14 @@ import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
 import util from "util";
 import User from "./user.mjs";
-
+import Admin from "./admin.mjs";
 const app = express();
 const port = 8102;
 
 const user = new User();
+const admin =  new Admin();
 await user.init();
+await admin.init();
 
 const mapiHandl = async (res, dataCallback) => {
   try {
@@ -74,8 +76,9 @@ const isAuth = async (req, res, next) => {
 };
 app.use("/public", isAuth, express.static("public"));
 
-app.get("/", requireAuth, (req, res) => {
+app.get("/", requireAuth, async (req, res) => {
   res.redirect("/private");
+  //await admin.listUsers();//TODO FOR TEST PURPOSES
 });
 
 app.post("/login", async (req, res) => {
