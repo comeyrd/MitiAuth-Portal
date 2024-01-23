@@ -35,6 +35,12 @@ const cookieSett = {
   httpOnly: true,
   sameSite: "Lax",
 };
+const typecookieSett = {
+  maxAge: 3 * 24 * 60 * 60 * 1000,
+  secure: true,
+  httpOnly: false,
+  sameSite: "Lax",
+};
 const deleteCookie = {
   maxAge: -1,
   secure: true,
@@ -44,9 +50,10 @@ const deleteCookie = {
 
 const requireAuth = async (req, res, next) => {
   const mapiToken = req.cookies.mapiTok;
-  if (mapiToken) {
+  const mapiType = req.cookies.mapiType;
+  if (mapiToken && mapiType) {
     try{
-    if (await checkValidity(mapiToken)) {
+    if (await checkValidity(mapiToken,mapiType)) {
       next(); // User is authenticated, proceed to the next middleware or route
     } else {
       res.cookie("mapiTok", "", deleteCookie);
@@ -61,9 +68,10 @@ const requireAuth = async (req, res, next) => {
 
 const isAuth = async (req, res, next) => {
   const mapiToken = req.cookies.mapiTok;
-  if (mapiToken) {
+  const mapiType = req.cookies.mapiType;
+  if (mapiToken && mapiType) {
     try{
-    if (await checkValidity(mapiToken)) {
+    if (await checkValidity(mapiToken,mapiType)) {
       res.redirect("/"); // User is authed redirect to login page
     } else {
       next();
@@ -78,21 +86,22 @@ app.use("/public", isAuth, express.static("public"));
 
 app.get("/", requireAuth, async (req, res) => {
   res.redirect("/private");
-  //await admin.listUsers();//TODO FOR TEST PURPOSES
 });
 
 app.post("/login", async (req, res) => {
   const mapiToken = req.cookies.mapiTok;
-  if (!(await checkValidity(mapiToken, res))) {
+  const mapiType = req.cookies.mapiType;
+  if (!(await checkValidity(mapiToken,mapiType))) {
     const { login, password } = req.body;
     await mapiHandl(res, async () => {
         const response = await user.login(login, password);
         res.cookie("mapiTok", response.token, cookieSett);
+        res.cookie("mapiType",response.type,typecookieSett);
         return { message: "Logged In" };
     });
 }});
 
-app.post("/logout", async (req, res) => {
+app.post("/logout",requireAuth, async (req, res) => {
   const mapiToken = req.cookies.mapiTok;
   if (mapiToken) {
     await mapiHandl(res,async()=>{
@@ -124,7 +133,7 @@ app.listen(port, () => {
   console.log(`Server is running on port http://localhost:${port}`);
 });
 
-async function checkValidity(mapiToken, res) {
+async function checkValidity(mapiToken, mapiType) {
   if (mapiToken) {
     try{
     const response = await user.validate(mapiToken)

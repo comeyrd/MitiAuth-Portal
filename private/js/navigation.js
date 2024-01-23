@@ -21,3 +21,27 @@ navButtonsContainer.addEventListener("click", function (event) {
     mainSection.style.display = "block";
   }
 });
+
+
+function addTab(prettyName, tabId, content) {
+  // Add a new navigation pill dynamically
+  const pillsTab = document.getElementById("pills-tab");
+  const newPill = document.createElement("li");
+  newPill.className = "nav-item";
+  newPill.innerHTML = `
+      <a href="#" class="nav-link customnav text-center" id="${tabId}"
+          data-bs-toggle="pill" data-bs-target="#${tabId}-content" type="button" role="tab"
+          aria-controls="${tabId}-content" aria-selected="true">
+          ${prettyName}
+      </a>
+  `;
+  pillsTab.appendChild(newPill);
+
+  // Add new content associated with the new pill
+  const pillsTabContent = document.getElementById("pills-tabContent");
+  const newContent = document.createElement("div");
+  newContent.className = "tab-pane fade";
+  newContent.id = `${tabId}-content`;
+  newContent.innerHTML = content;
+  pillsTabContent.appendChild(newContent);
+}

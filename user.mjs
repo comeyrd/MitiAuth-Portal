@@ -40,24 +40,34 @@ const mysqlConfig = {
 class User {
   constructor() {
     this.mitiSett = new mitiSettings(layout);
-    
   }
-  async init(){
+  async init() {
     this.mysqlPool = await mysql.createPool(mysqlConfig);
     this.auth = new mitiAuth(this.mysqlPool, this.mitiSett);
     this.account = new mitiAccount(this.mysqlPool, this.auth, this.mitiSett);
   }
 
   async login(login, password) {
-    let token = await this.auth.login(login, password, layout.USER.id);
-    return { token: token, expiration: this.auth.jwtExpiration };
+    const users = this.mitiSett.getUserTypes();
+    let err;
+    for (const user in users) {
+      try {
+        let token = await this.auth.login(login, password, users[user]);
+        return {
+          token: token,
+          expiration: this.auth.jwtExpiration,
+          type: users[user],
+        };
+      } catch (error) {
+        err = error;
+      }
+    }
+    throw err;
   }
 
   async validate(token) {
     const decoded = await this.auth.checkJWT(token);
-    if (decoded.type === layout.USER.id && decoded.userId) {
-      return { id: decoded.userId, type: layout.USER.id };
-    }
+    return { id: decoded.userId, type: decoded.type };
   }
 
   async create(login, password, userObj) {
@@ -91,7 +101,7 @@ class User {
     return await this.account.getScheme(token);
   }
 
-  async setupDb(){
+  async setupDb() {
     await this.auth.setupDatabase();
     await this.account.setupDatabase();
   }

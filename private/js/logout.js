@@ -1,8 +1,8 @@
 // Logout Functionality
 const logoutButton = document.getElementById("logoutButton");
-const myInfo = document.getElementById("username");
 
 logoutButton.addEventListener("click", function (event) {
+  const myInfo = document.getElementById("username");
   event.preventDefault();
   fetch("/logout", {
     method: "POST",

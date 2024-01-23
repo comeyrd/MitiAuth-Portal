@@ -49,57 +49,19 @@ class Admin {
     this.admin = new mitiAdmin(this.mysqlPool,this.auth,this.account,this.mitiSett);
 }
 
-  async login(login, password) {
-    let token = await this.auth.login(login, password, layout.ADMIN.id);
-    return { token: token, expiration: this.auth.jwtExpiration };
-  }
 
-  async validate(token) {
-    const decoded = await this.auth.checkJWT(token);
-    if (decoded.type === layout.ADMIN.id && decoded.ADMINId) {
-      return { id: decoded.ADMINId, type: layout.ADMIN.id };
-    }
-  }
-
-  async create(login, password, ADMINObj) {
+  async create(login, password, userObj) {
     const token = await this.auth.register(login, password, layout.ADMIN.id);
-    await this.account.create(ADMINObj, token);
-  }
-
-  async delete(token) {
-    await this.account.delete(token);
-    await this.auth.delete(token);
-  }
-
-  async logout(token) {
-    const newtoken = await this.auth.logout(token);
-    return { token: newtoken, expiration: this.auth.logoutExpiration };
-  }
-
-  async changePass(token, login, password) {
-    await this.auth.update(token, login, password);
-  }
-
-  async getinfo(token) {
-    return await this.account.read(token);
-  }
-
-  async editinfo(token, infoObj) {
-    return await this.account.update(infoObj, token);
-  }
-
-  async getScheme(token) {
-    return await this.account.getScheme(token);
-  }
-
-  async setupDb(){
-    await this.auth.setupDatabase();
-    await this.account.setupDatabase();
+    await this.account.create(userObj, token);
   }
 
   async listUsers(){
-    await this.admin.list(layout.USER.id);
-    await this.admin.list(layout.ADMIN.id);
+    let users={};
+    const types = this.mitiSett.getUserTypes();
+    for (let type in types){
+      users[types[type]] = await this.admin.list(types[type]);
+    }
+    return users;
   }
 
 }
