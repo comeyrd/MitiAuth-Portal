@@ -20,13 +20,13 @@ function createProfileRow(labelText, valueText) {
 
 function updateProfile(uInfo) {
   const profileName = document.getElementById("profileName");
-  profileName.textContent = uInfo.name;
+  profileName.textContent = uInfo.name.data;
   const profileContainer = document.getElementById("user-info-div");
   profileContainer.innerHTML = "";
   for (const key in uInfo) {
     if (uInfo.hasOwnProperty(key)) {
       const value = uInfo[key];
-      const row = createProfileRow(key, value);
+      const row = createProfileRow(value.pretty, value.data);
       profileContainer.appendChild(row);
       if (key !== Object.keys(uInfo)[Object.keys(uInfo).length - 1]) {
         const separator = document.createElement("hr");
@@ -42,11 +42,11 @@ function loadProfile() {
     headers: { "Content-Type": "application/json" },
     credentials: "include",
   })
-    .then((response) => response.json())
-    .then((data) => {
-      console.log(data.data.userInfo);
-      myInfo.textContent = data.data.uInfo.username;
-      updateProfile(data.data.uInfo);
+    .then((http) => http.json())
+    .then((response) => {
+      const myInfo = document.getElementById("username");
+      myInfo.textContent = response.data.username.data;
+      updateProfile(response.data);
     })
     .catch((error) => {
       console.log(error);

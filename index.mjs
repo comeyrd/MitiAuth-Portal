@@ -1,14 +1,31 @@
 import express from "express";
-import axios from "axios";
 import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
 import util from "util";
-
+import User from "./user.mjs";
+import Admin from "./admin.mjs";
 const app = express();
 const port = 8102;
 
-const MAPIURL = "https://fmapi.ceyraud.com";
-//const MAPIURL = "http://localhost:8101";
+const user = new User();
+const admin =  new Admin();
+await user.init();
+await admin.init();
+
+const mapiHandl = async (res, dataCallback) => {
+  try {
+    const data = await dataCallback();
+    res.status(200).json({
+      Response: "Ok",
+      data: data || {}, 
+    });
+  } catch (error) {
+    res.status(500).json({
+      Response: "Api Error",
+      data: { message: error.message },
+    });
+  }
+};
 
 app.use(bodyParser.json());
 app.use(cookieParser());
@@ -16,6 +33,12 @@ const cookieSett = {
   maxAge: 3 * 24 * 60 * 60 * 1000,
   secure: true,
   httpOnly: true,
+  sameSite: "Lax",
+};
+const typecookieSett = {
+  maxAge: 3 * 24 * 60 * 60 * 1000,
+  secure: true,
+  httpOnly: false,
   sameSite: "Lax",
 };
 const deleteCookie = {
@@ -27,11 +50,15 @@ const deleteCookie = {
 
 const requireAuth = async (req, res, next) => {
   const mapiToken = req.cookies.mapiTok;
-  if (mapiToken) {
-    if (await checkValidity(mapiToken)) {
+  const mapiType = req.cookies.mapiType;
+  if (mapiToken && mapiType) {
+    try{
+    if (await checkValidity(mapiToken,mapiType)) {
       next(); // User is authenticated, proceed to the next middleware or route
     } else {
       res.cookie("mapiTok", "", deleteCookie);
+      res.redirect("/public/login.html"); // User is not authenticated, redirect to login page
+    }}catch(error){
       res.redirect("/public/login.html"); // User is not authenticated, redirect to login page
     }
   } else {
@@ -41,11 +68,15 @@ const requireAuth = async (req, res, next) => {
 
 const isAuth = async (req, res, next) => {
   const mapiToken = req.cookies.mapiTok;
-  if (mapiToken) {
-    if (await checkValidity(mapiToken)) {
-      res.redirect("/"); // User is not authenticated, redirect to login page
+  const mapiType = req.cookies.mapiType;
+  if (mapiToken && mapiType) {
+    try{
+    if (await checkValidity(mapiToken,mapiType)) {
+      res.redirect("/"); // User is authed redirect to login page
     } else {
       next();
+    }}catch(error){
+        next();
     }
   } else {
     next();
@@ -53,134 +84,64 @@ const isAuth = async (req, res, next) => {
 };
 app.use("/public", isAuth, express.static("public"));
 
-app.get("/", requireAuth, (req, res) => {
+app.get("/", requireAuth, async (req, res) => {
   res.redirect("/private");
 });
 
 app.post("/login", async (req, res) => {
   const mapiToken = req.cookies.mapiTok;
-  if (!(await checkValidity(mapiToken, res))) {
+  const mapiType = req.cookies.mapiType;
+  if (!(await checkValidity(mapiToken,mapiType))) {
     const { login, password } = req.body;
-    const response = await axios.post(MAPIURL + "/auth/login", {
-      login: login,
-      password: password,
+    await mapiHandl(res, async () => {
+        const response = await user.login(login, password);
+        res.cookie("mapiTok", response.token, cookieSett);
+        res.cookie("mapiType",response.type,typecookieSett);
+        return { message: "Logged In" };
     });
+}});
 
-    if (response.data.Response === "Ok") {
-      res.cookie("mapiTok", response.data.data.token, cookieSett);
-      res.status(200).json({
-        Response: "Ok",
-        data: { message: "Logged In" },
-      });
-    } else {
-      res.status(500).json({
-        Response: "Api Error",
-        data: { message: response.data.data.type },
-      });
-    }
-  } else {
-    res.status(200).json({
-      Response: "Ok",
-      data: { message: "Logged In" },
-    });
-  }
-});
-app.post("/logout", async (req, res) => {
+app.post("/logout",requireAuth, async (req, res) => {
   const mapiToken = req.cookies.mapiTok;
   if (mapiToken) {
-    const response = await axios.post(MAPIURL + "/auth/logout", {
-      token: mapiToken,
-    });
-    if (response.data.Response === "Ok") {
+    await mapiHandl(res,async()=>{
+      await user.logout(mapiToken);
       res.cookie("mapiTok", "", deleteCookie);
-      res.status(200).json({
-        Response: "Ok",
-        data: { message: "Logged Out" },
-      });
-    } else {
-      res.status(500).json({ Response: "Error" });
-    }
-  } else {
+      return { message: "Logged Out" };
+    });
+   } else {
     res.status(500).json({ Response: "Error" });
   }
 });
 
 app.post("/account/getMyInfo", requireAuth, async (req, res) => {
   const mapiToken = req.cookies.mapiTok;
-  try {
-    const response = await axios.post(MAPIURL + "/account/get-info", {
-      token: mapiToken,
+    await mapiHandl(res,async()=>{
+      return await user.getinfo(mapiToken);
     });
-    if (response.data.Response === "Ok") {
-      res.status(200).json({
-        Response: "Ok",
-        data: response.data.data,
-      });
-    } else {
-      res.status(500).json({ Response: "Error" });
-    }
-  } catch (error) {
-    res.status(500).json({
-      Response: "Api Error",
-      data: { message: error.message },
-    });
-  }
 });
 app.get("/account/get-scheme", requireAuth, async (req, res) => {
   const mapiToken = req.cookies.mapiTok;
-  try {
-    const response = await axios.post(MAPIURL + "/account/get-scheme", {
-      token: mapiToken,
-    });
-    if (response.data.Response === "Ok") {
-      res.status(200).json({
-        Response: "Ok",
-        data: response.data.data,
-      });
-    } else {
-      res.status(500).json({ Response: "Error" });
-    }
-  } catch (error) {
-    res.status(500).json({
-      Response: "Api Error",
-      data: { message: error.message },
-    });
-  }
+  await mapiHandl(res,async()=>{
+    return await user.getScheme(mapiToken);
+  });
 });
-app.post("/account/create", requireAuth, async (req, res) => {
-  const mapiToken = req.cookies.mapiTok;
-  try {
-    const response = await axios.post(MAPIURL + "/auth/register", {
-      token: mapiToken,
-      create: req.body,
-    });
-    if (response.data.Response === "Ok") {
-      res.status(200).json({
-        Response: "Ok",
-        data: response.data.data,
-      });
-    } else {
-      res.status(500).json({ Response: "Error" });
-    }
-  } catch (error) {
-    res.status(500).json({
-      Response: "Api Error",
-      data: { message: error.message, api: error.response.data.data.type },
-    });
-  }
-});
+
 app.use("/private", requireAuth, express.static("private"));
 
 app.listen(port, () => {
   console.log(`Server is running on port http://localhost:${port}`);
 });
 
-async function checkValidity(mapiToken, res) {
+async function checkValidity(mapiToken, mapiType) {
   if (mapiToken) {
-    const response = await axios.post(MAPIURL + "/auth/validate", {
-      token: mapiToken,
-    });
-    return response.data.Response === "Ok";
+    try{
+    const response = await user.validate(mapiToken)
+    return !!(response.id);
+    }
+    catch{
+      return false;
+    }
   } else {
     return false;
   }
