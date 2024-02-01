@@ -6,8 +6,18 @@ import { layout } from "./dblayout.mjs";
 import dotenv from "dotenv";
 import User from "./user.mjs";
 import Admin from "./admin.mjs";
+import ejs from 'ejs';
+import path from 'path';
+
+
+
 const app = express();
 const port = 8102;
+const __dirname = import.meta.dirname;
+
+// Set EJS as the view engine
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
 
 dotenv.config();
 
@@ -127,6 +137,50 @@ app.use("/private",await user.user("/"), express.static("private"));
 app.listen(port, () => {
   console.log(`Server is running on port http://localhost:${port}`);
 });
+
+
+var navbarData = [
+  { text: 'Home', id: 'home'},
+  { text: 'About', id: 'about' },
+  { text: 'Services', id: 'services' },
+  { text: 'Pricing', id: 'pricing' },
+  { text: 'Contact', id: 'contact' }
+];
+
+app.get('/testing', async (req, res) => {
+ res.redirect("/testing/home");
+});
+
+app.get('/testing/:page', async (req, res) => {
+  const currentPage = req.params.page; // Get the current page from the URL
+
+  // Check if the current page matches any of the navbarData IDs
+  const matchedIndex = navbarData.findIndex(item => item.id === currentPage);
+
+  if (matchedIndex !== -1) {
+      // Set the 'main' property of the matched page to true
+      navbarData.forEach((item, index) => {
+          if (index === matchedIndex) {
+              item.main = "true";
+          } else {
+              delete item.main;
+          }
+      });
+
+      const user = {
+          name: "test",
+          menu: [{ text: "Profile", id: "#" }, { text: "Sign Out", id: "#" }],
+      };
+      res.render('index', { "navbarData": navbarData, "user": user });
+  } else {
+      // If the current page is not found in navbarData, render a 404 page
+      res.status(404).send('404 Page Not Found');
+  }
+});
+
+
+
+app.use("/testing/js/",isAuth, express.static("views/js/"));
 
 
 function showObj(obj) {
