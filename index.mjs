@@ -6,7 +6,7 @@ import { layout } from "./dblayout.mjs";
 import dotenv from "dotenv";
 import User from "./user.mjs";
 import Admin from "./admin.mjs";
-import calielRoutes from "../caliel-logger/site/calielRoutes.js"
+import calielRoutes from "../caliel-autoqr/caliel-logger/site/calielRoutes.js"
 import path from 'path';
 import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);

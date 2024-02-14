@@ -24,10 +24,10 @@ const mysqlConfigFirst = {
   let con;
 
   try {
-    con = await mysql.createConnection(mysqlConfigFirst);
-    await con.query(`DROP DATABASE mapi;`);
-    await con.query(`CREATE DATABASE mapi;`);
-    await con.end();
+    //con = await mysql.createConnection(mysqlConfigFirst);
+    //await con.query(`DROP DATABASE mapi;`);
+    //await con.query(`CREATE DATABASE mapi;`);
+    //await con.end();
     const user = new User(layout,mysqlConfig);
     const admin =  new Admin(layout,mysqlConfig);
     await user.init();
@@ -35,7 +35,7 @@ const mysqlConfigFirst = {
     await user.setupDb();
     //await user.create( "user","user",{ email: "user@ceyraud.com", name: "User" });
     //await admin.create( "admin","admin",{ email: "admin@ceyraud.com", name: "Admin" ,phone:"AdminAdminAdmin"});
-    await admin.create( process.env.ROOT_LOG,process.env.ROOT_PASS,{ email: "miti@ceyraud.com", name: "Miti" ,phone:"823712"});
+    await user.create( process.env.ROOT_LOG,process.env.ROOT_PASS,{ email: "miti@ceyraud.com", name: "Miti" });
     console.log("Done");
   } catch (e) {
     console.error("An error occurred:", e);

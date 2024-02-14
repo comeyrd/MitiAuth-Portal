@@ -21,11 +21,12 @@
     "body-parser": "^1.20.2",
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.3.1",
+    "ejs": "^3.1.9",
     "express": "^4.18.2",
     "miti-account": "file:AccessControl/MitiAccount",
+    "miti-admin": "file:AccessControl/MitiAdmin",
     "miti-auth": "file:AccessControl/MitiAuth",
     "miti-settings": "file:AccessControl/MitiSettings",
-    "miti-admin": "file:AccessControl/MitiAdmin",
     "mysql2": "^3.7.1"
   },
   "devDependencies": {
