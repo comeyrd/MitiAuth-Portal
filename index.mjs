@@ -6,6 +6,12 @@ import { layout } from "./dblayout.mjs";
 import dotenv from "dotenv";
 import User from "./user.mjs";
 import Admin from "./admin.mjs";
+import calielRoutes from "../caliel-logger/site/calielRoutes.js"
+import path from 'path';
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const app = express();
 const port = 8102;
 
@@ -122,7 +128,17 @@ app.get("/account/get-scheme",await user.user("/"), async (req, res) => {
   });
 });
 
-app.use("/private",await user.user("/"), express.static("private"));
+app.use("/private", await user.user("/"), express.static("private"));
+
+const ejs = import('ejs');
+app.set('view engine', 'ejs');
+app.set('views', __dirname + '/views');
+
+const authMiddleware = user.user("/");
+
+app.use("/caliel", await user.user("/"), calielRoutes); 
+
+
 
 app.listen(port, () => {
   console.log(`Server is running on port http://localhost:${port}`);

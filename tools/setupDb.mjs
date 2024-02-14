@@ -1,6 +1,7 @@
 import mysql from "mysql2/promise";
 import User from "../user.mjs";
 
+import { layout } from "../dblayout.mjs";
 
 import dotenv from "dotenv";
 import Admin from "../admin.mjs";
@@ -27,13 +28,13 @@ const mysqlConfigFirst = {
     await con.query(`DROP DATABASE mapi;`);
     await con.query(`CREATE DATABASE mapi;`);
     await con.end();
-    let user = new User();
-    let admin = new Admin();
+    const user = new User(layout,mysqlConfig);
+    const admin =  new Admin(layout,mysqlConfig);
     await user.init();
     await admin.init();
     await user.setupDb();
-    await user.create( "user","user",{ email: "user@ceyraud.com", name: "User" });
-    await admin.create( "admin","admin",{ email: "admin@ceyraud.com", name: "Admin" ,phone:"AdminAdminAdmin"});
+    //await user.create( "user","user",{ email: "user@ceyraud.com", name: "User" });
+    //await admin.create( "admin","admin",{ email: "admin@ceyraud.com", name: "Admin" ,phone:"AdminAdminAdmin"});
     await admin.create( process.env.ROOT_LOG,process.env.ROOT_PASS,{ email: "miti@ceyraud.com", name: "Miti" ,phone:"823712"});
     console.log("Done");
   } catch (e) {
