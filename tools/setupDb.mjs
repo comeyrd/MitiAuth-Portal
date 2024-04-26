@@ -1,9 +1,9 @@
 import mysql from "mysql2/promise";
-import User from "../user.mjs";
+import User from "../AccessControl/Classes/user.mjs";
 
 
 import dotenv from "dotenv";
-import Admin from "../admin.mjs";
+import Admin from "../AccessControl/Classes/admin.mjs";
 dotenv.config();
 
 const mysqlConfig = {

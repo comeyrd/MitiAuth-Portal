@@ -4,8 +4,12 @@ import bodyParser from "body-parser";
 import util from "util";
 import { layout } from "./dblayout.mjs";
 import dotenv from "dotenv";
-import User from "./user.mjs";
-import Admin from "./admin.mjs";
+import User from "./AccessControl/Classes/user.mjs";
+import Admin from "./AccessControl/Classes/admin.mjs";
+import path from 'path';
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const app = express();
 const port = 8102;
 
@@ -76,7 +80,7 @@ const isAuth = async (req, res, next) => {
 app.use("/public",isAuth, express.static("public"));
 
 app.get("/",await user.user("/public/login.html"), async (req, res) => {
-  res.redirect("/private");
+  res.redirect("/home");
 });
 
 app.post("/login", async (req, res) => {
@@ -96,38 +100,44 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.post("/logout",await user.user("/"), async (req, res) => {
+app.get("/logout", async (req, res) => {
   const mapiToken = req.cookies.mapiTok;
   if (mapiToken) {
-    await mapiHandl(res,async()=>{
       await user.logout(mapiToken);
       res.cookie("mapiTok", "", deleteCookie);
-      return { message: "Logged Out" };
-    });
-   } else {
-    res.status(500).json({ Response: "Error" });
+      res.redirect("/");
+  } else {
+    res.redirect("/");
   }
 });
 
-app.post("/account/getMyInfo",await user.user("/"), async (req, res) => {
-  const mapiToken = req.cookies.mapiTok;
-    await mapiHandl(res,async()=>{
-      return await user.getinfo(mapiToken);
-    });
-});
-app.get("/account/get-scheme",await user.user("/"), async (req, res) => {
-  const mapiToken = req.cookies.mapiTok;
-  await mapiHandl(res,async()=>{
-    return await user.getScheme(mapiToken);
-  });
-});
 
 app.use("/private",await user.user("/"), express.static("private"));
+
+const ejs = import('ejs');
+app.set('view engine', 'ejs');
+app.set('views', __dirname + '/views');
+
+app.get("/home",await user.user("/"),async(req,res)=>{
+  const mapiToken = req.cookies.mapiTok;
+  const info = await user.getinfo(mapiToken);
+  res.render("page",{"page":"home","dir":"pages/","info":info});})
+
+app.get("/dashboard",await user.user("/"),async(req,res)=>{
+  const mapiToken = req.cookies.mapiTok;
+  const info = await user.getinfo(mapiToken);
+  res.render("page",{"page":"dashboard","dir":"pages/","info":info});
+})
+
+app.get("/profile",await user.user("/"),async(req,res)=>{
+  const mapiToken = req.cookies.mapiTok;
+  const info = await user.getinfo(mapiToken);
+  res.render("page",{"page":"profile","dir":"pages/","info":info});
+})
 
 app.listen(port, () => {
   console.log(`Server is running on port http://localhost:${port}`);
 });
-
 
 function showObj(obj) {
   console.log(util.inspect(obj, { depth: null }));
