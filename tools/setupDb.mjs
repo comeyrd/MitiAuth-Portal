@@ -4,6 +4,7 @@ import User from "../AccessControl/Classes/user.mjs";
 
 import dotenv from "dotenv";
 import Admin from "../AccessControl/Classes/admin.mjs";
+import { layout } from "../dblayout.mjs";
 dotenv.config();
 
 const mysqlConfig = {
@@ -27,8 +28,8 @@ const mysqlConfigFirst = {
     await con.query(`DROP DATABASE mapi;`);
     await con.query(`CREATE DATABASE mapi;`);
     await con.end();
-    let user = new User();
-    let admin = new Admin();
+    let user = new User(layout,mysqlConfig);
+    let admin = new Admin(layout,mysqlConfig);
     await user.init();
     await admin.init();
     await user.setupDb();
