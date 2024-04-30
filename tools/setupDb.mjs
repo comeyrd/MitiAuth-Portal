@@ -1,7 +1,7 @@
 import mysql from "mysql2/promise";
 import User from "../AccessControl/Classes/user.mjs";
 
-
+import CalielDb from "../caliel-logger/db/CalielDb.mjs";
 import dotenv from "dotenv";
 import Admin from "../AccessControl/Classes/admin.mjs";
 import { layout } from "../dblayout.mjs";
@@ -36,6 +36,10 @@ const mysqlConfigFirst = {
     await user.create( "user","user",{ email: "user@ceyraud.com", name: "User" });
     await admin.create( "admin","admin",{ email: "admin@ceyraud.com", name: "Admin" ,phone:"AdminAdminAdmin"});
     await admin.create( process.env.ROOT_LOG,process.env.ROOT_PASS,{ email: "miti@ceyraud.com", name: "Miti" ,phone:"823712"});
+
+    let caliel = new CalielDb(await mysql.createPool(mysqlConfig))
+    await caliel.setupDatabase()
+
     console.log("Done");
   } catch (e) {
     console.error("An error occurred:", e);

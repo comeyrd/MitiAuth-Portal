@@ -7,6 +7,8 @@ import dotenv from "dotenv";
 import User from "./AccessControl/Classes/user.mjs";
 import Admin from "./AccessControl/Classes/admin.mjs";
 import path from 'path';
+import calielRoutes,{get_caliel_obj,caliel_setup,get_caliel_logs,get_all_caliel,get_all_caliel_logs} from './caliel-logger/site/calielRoutes.mjs';
+
 import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -27,6 +29,7 @@ const admin_tabs = [{id:"admin",pretty:"Admin"}]
 
 const user = new User(layout,mysqlConfig);
 const admin =  new Admin(layout,mysqlConfig,layout.ADMIN.id);
+await caliel_setup(mysqlConfig);
 
 await user.init();
 await admin.init();
@@ -133,7 +136,10 @@ app.get("/profile",await user.user("/"),async(req,res)=>{
   res.render("page", obj);
 })
 app.get("/home",await user.user("/"),async(req,res)=>{
+  const id = (await user.decode(req.cookies.mapiTok)).id;
   const obj = await build_default_obj(req.cookies.mapiType,req.cookies.mapiTok,"home");
+  obj.caliel =  await get_caliel_obj(id);
+  obj.caliel_logs = await get_caliel_logs(id);
   res.render("page", obj);
 })
 app.get("/dashboard",await user.user("/"),async(req,res)=>{
@@ -142,6 +148,8 @@ app.get("/dashboard",await user.user("/"),async(req,res)=>{
 })
 app.get("/admin",await user.user("/"),await admin.admn("/"),async(req,res)=>{
   const obj = await build_default_obj(req.cookies.mapiType,req.cookies.mapiTok,"admin");
+  obj.caliel_loggers = await get_all_caliel();
+  obj.caliel_alllogs = await get_all_caliel_logs();
   res.render("page", obj);
 })
 
@@ -152,9 +160,10 @@ app.listen(port, () => {
 function showObj(obj) {
   console.log(util.inspect(obj, { depth: null }));
 }
+app.use('/caliel',await user.user("/"), calielRoutes); 
 
 async function build_default_obj(type,token,current){
   const info = await user.getinfo(token);
   const tabs = gettabs(type);
-  return {"pages":tabs,"current_page": current,"dir":"pages/","info":info}
+  return {"pages":tabs,"current_page": current,"dir":"pages/","info":info,"originurl":"/"+current}
 }

@@ -1,3 +1,6 @@
 [submodule "AccessControl"]
 	path = AccessControl
 	url = https://github.com/comeyrd/AccessControl.git
+[submodule "caliel-logger"]
+	path = caliel-logger
+	url = https://github.com/comeyrd/caliel-logger
