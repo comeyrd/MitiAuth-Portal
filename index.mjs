@@ -22,8 +22,11 @@ const mysqlConfig = {
   database: process.env.DB_DATABASE,
 };
 
+const all_tabs = [{id:"home",pretty:"Home"},{id:"dashboard",pretty:"Dashboard"}]
+const admin_tabs = [{id:"admin",pretty:"Admin"}]
+
 const user = new User(layout,mysqlConfig);
-const admin =  new Admin(layout,mysqlConfig);
+const admin =  new Admin(layout,mysqlConfig,layout.ADMIN.id);
 
 await user.init();
 await admin.init();
@@ -77,6 +80,13 @@ const isAuth = async (req, res, next) => {
   }
 };
 
+function gettabs(type){
+  let tabs = all_tabs;
+  if( type === admin){
+    tabs.append(admin_tabs)
+  }
+  return tabs;
+}
 app.use("/public",isAuth, express.static("public"));
 
 app.get("/",await user.user("/public/login.html"), async (req, res) => {
@@ -118,22 +128,34 @@ const ejs = import('ejs');
 app.set('view engine', 'ejs');
 app.set('views', __dirname + '/views');
 
-app.get("/home",await user.user("/"),async(req,res)=>{
-  const mapiToken = req.cookies.mapiTok;
-  const info = await user.getinfo(mapiToken);
-  res.render("page",{"page":"home","dir":"pages/","info":info});})
 
-app.get("/dashboard",await user.user("/"),async(req,res)=>{
-  const mapiToken = req.cookies.mapiTok;
-  const info = await user.getinfo(mapiToken);
-  res.render("page",{"page":"dashboard","dir":"pages/","info":info});
-})
+// Define a common route handler function
+function handleRoute(tab) {
+  return async (req, res) => {
+      const mapiToken = req.cookies.mapiTok;
+      const type = req.cookies.mapiType;
+      const info = await user.getinfo(mapiToken);
+      let tabs = gettabs(type);
+      res.render("page", {"pages":tabs,"current_page": tab.id, "dir": "pages/", "info": info});
+  };
+}
+
+// Create routes for all tabs
+all_tabs.forEach(async tab => {
+  app.get(`/${tab.id}`, await user.user("/"), handleRoute(tab));
+});
+
+// Create routes for admin tabs
+admin_tabs.forEach(async tab => {
+  app.get(`/${tab.id}`, await user.user("/"), await admin.admn("/"), handleRoute(tab));
+});
 
 app.get("/profile",await user.user("/"),async(req,res)=>{
   const mapiToken = req.cookies.mapiTok;
   const info = await user.getinfo(mapiToken);
-  res.render("page",{"page":"profile","dir":"pages/","info":info});
-})
+  const type = req.cookies.mapiType;
+  let tabs = gettabs(type);
+  res.render("page", {"pages":tabs,"current_page": "profile", "dir": "pages/", "info": info});})
 
 app.listen(port, () => {
   console.log(`Server is running on port http://localhost:${port}`);
