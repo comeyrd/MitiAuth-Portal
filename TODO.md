@@ -2,7 +2,8 @@
 
 For AccessControl :
 
-- Merge the MitiAuth Table into one table, and check for unique ID
+- Merge the MitiAuth Table into one table, and check for unique ID - Done
+- Maybe : adding a way to save the state of the jwt secret, so it can remember how to validate secrets after restart
 
 For everything :
 

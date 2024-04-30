@@ -4,8 +4,12 @@ import bodyParser from "body-parser";
 import util from "util";
 import { layout } from "./dblayout.mjs";
 import dotenv from "dotenv";
-import User from "./user.mjs";
-import Admin from "./admin.mjs";
+import User from "./AccessControl/Classes/user.mjs";
+import Admin from "./AccessControl/Classes/admin.mjs";
+import path from 'path';
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const app = express();
 const port = 8102;
 
@@ -18,8 +22,11 @@ const mysqlConfig = {
   database: process.env.DB_DATABASE,
 };
 
+const all_tabs = [{id:"home",pretty:"Home"},{id:"dashboard",pretty:"Dashboard"}]
+const admin_tabs = [{id:"admin",pretty:"Admin"}]
+
 const user = new User(layout,mysqlConfig);
-const admin =  new Admin(layout,mysqlConfig);
+const admin =  new Admin(layout,mysqlConfig,layout.ADMIN.id);
 
 await user.init();
 await admin.init();
@@ -73,10 +80,16 @@ const isAuth = async (req, res, next) => {
   }
 };
 
+function gettabs(type){
+  if( type === "admin"){
+    return [...all_tabs, ...admin_tabs];
+  }
+  return all_tabs;
+}
 app.use("/public",isAuth, express.static("public"));
 
 app.get("/",await user.user("/public/login.html"), async (req, res) => {
-  res.redirect("/private");
+  res.redirect("/home");
 });
 
 app.post("/login", async (req, res) => {
@@ -96,39 +109,52 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.post("/logout",await user.user("/"), async (req, res) => {
+app.get("/logout", async (req, res) => {
   const mapiToken = req.cookies.mapiTok;
   if (mapiToken) {
-    await mapiHandl(res,async()=>{
       await user.logout(mapiToken);
       res.cookie("mapiTok", "", deleteCookie);
-      return { message: "Logged Out" };
-    });
-   } else {
-    res.status(500).json({ Response: "Error" });
+      res.redirect("/");
+  } else {
+    res.redirect("/");
   }
 });
 
-app.post("/account/getMyInfo",await user.user("/"), async (req, res) => {
-  const mapiToken = req.cookies.mapiTok;
-    await mapiHandl(res,async()=>{
-      return await user.getinfo(mapiToken);
-    });
-});
-app.get("/account/get-scheme",await user.user("/"), async (req, res) => {
-  const mapiToken = req.cookies.mapiTok;
-  await mapiHandl(res,async()=>{
-    return await user.getScheme(mapiToken);
-  });
-});
 
 app.use("/private",await user.user("/"), express.static("private"));
+
+const ejs = import('ejs');
+app.set('view engine', 'ejs');
+app.set('views', __dirname + '/views');
+
+
+app.get("/profile",await user.user("/"),async(req,res)=>{
+  const obj = await build_default_obj(req.cookies.mapiType,req.cookies.mapiTok,"profile");
+  res.render("page", obj);
+})
+app.get("/home",await user.user("/"),async(req,res)=>{
+  const obj = await build_default_obj(req.cookies.mapiType,req.cookies.mapiTok,"home");
+  res.render("page", obj);
+})
+app.get("/dashboard",await user.user("/"),async(req,res)=>{
+  const obj = await build_default_obj(req.cookies.mapiType,req.cookies.mapiTok,"dashboard");
+  res.render("page", obj);
+})
+app.get("/admin",await user.user("/"),await admin.admn("/"),async(req,res)=>{
+  const obj = await build_default_obj(req.cookies.mapiType,req.cookies.mapiTok,"admin");
+  res.render("page", obj);
+})
 
 app.listen(port, () => {
   console.log(`Server is running on port http://localhost:${port}`);
 });
 
-
 function showObj(obj) {
   console.log(util.inspect(obj, { depth: null }));
+}
+
+async function build_default_obj(type,token,current){
+  const info = await user.getinfo(token);
+  const tabs = gettabs(type);
+  return {"pages":tabs,"current_page": current,"dir":"pages/","info":info}
 }
