@@ -128,33 +128,22 @@ app.set('view engine', 'ejs');
 app.set('views', __dirname + '/views');
 
 
-// Define a common route handler function
-function handleRoute(tab) {
-  return async (req, res) => {
-      const mapiToken = req.cookies.mapiTok;
-      const type = req.cookies.mapiType;
-      const info = await user.getinfo(mapiToken);
-      let tabs = gettabs(type);
-      res.render("page", {"pages":tabs,"current_page": tab.id, "dir": "pages/", "info": info});
-  };
-}
-
-// Create routes for all tabs
-all_tabs.forEach(async tab => {
-  app.get(`/${tab.id}`, await user.user("/"), handleRoute(tab));
-});
-
-// Create routes for admin tabs
-admin_tabs.forEach(async tab => {
-  app.get(`/${tab.id}`, await user.user("/"), await admin.admn("/"), handleRoute(tab));
-});
-
 app.get("/profile",await user.user("/"),async(req,res)=>{
-  const mapiToken = req.cookies.mapiTok;
-  const info = await user.getinfo(mapiToken);
-  const type = req.cookies.mapiType;
-  let tabs = gettabs(type);
-  res.render("page", {"pages":tabs,"current_page": "profile", "dir": "pages/", "info": info});})
+  const obj = await build_default_obj(req.cookies.mapiType,req.cookies.mapiTok,"profile");
+  res.render("page", obj);
+})
+app.get("/home",await user.user("/"),async(req,res)=>{
+  const obj = await build_default_obj(req.cookies.mapiType,req.cookies.mapiTok,"home");
+  res.render("page", obj);
+})
+app.get("/dashboard",await user.user("/"),async(req,res)=>{
+  const obj = await build_default_obj(req.cookies.mapiType,req.cookies.mapiTok,"dashboard");
+  res.render("page", obj);
+})
+app.get("/admin",await user.user("/"),await admin.admn("/"),async(req,res)=>{
+  const obj = await build_default_obj(req.cookies.mapiType,req.cookies.mapiTok,"admin");
+  res.render("page", obj);
+})
 
 app.listen(port, () => {
   console.log(`Server is running on port http://localhost:${port}`);
@@ -162,4 +151,10 @@ app.listen(port, () => {
 
 function showObj(obj) {
   console.log(util.inspect(obj, { depth: null }));
+}
+
+async function build_default_obj(type,token,current){
+  const info = await user.getinfo(token);
+  const tabs = gettabs(type);
+  return {"pages":tabs,"current_page": current,"dir":"pages/","info":info}
 }
