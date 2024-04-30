@@ -134,9 +134,8 @@ const ejs = import('ejs');
 app.set('view engine', 'ejs');
 app.set('views', __dirname + '/views');
 
-const authMiddleware = user.user("/");
 
-app.use("/caliel", await user.user("/"), calielRoutes); 
+app.use("/private/caliel", await user.user("/"), calielRoutes); 
 
 
 

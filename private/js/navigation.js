@@ -15,7 +15,6 @@ profileLink.addEventListener("click", function (event) {
 });
 
 navButtonsContainer.addEventListener("click", function (event) {
-  event.preventDefault();
   if (event.target.classList.contains("nav-link")) {
     profileSection.style.display = "none";
     mainSection.style.display = "block";
