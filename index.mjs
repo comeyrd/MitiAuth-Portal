@@ -81,11 +81,10 @@ const isAuth = async (req, res, next) => {
 };
 
 function gettabs(type){
-  let tabs = all_tabs;
-  if( type === admin){
-    tabs.append(admin_tabs)
+  if( type === "admin"){
+    return [...all_tabs, ...admin_tabs];
   }
-  return tabs;
+  return all_tabs;
 }
 app.use("/public",isAuth, express.static("public"));
 
