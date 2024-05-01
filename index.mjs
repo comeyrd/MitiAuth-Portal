@@ -50,6 +50,7 @@ const mapiHandl = async (res, dataCallback) => {
 };
 
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cookieParser());
 const cookieSett = {
   maxAge: 3 * 24 * 60 * 60 * 1000,
@@ -150,8 +151,6 @@ app.get("/admin",await user.user("/"),await admin.admn("/"),async(req,res)=>{
   const obj = await build_default_obj(req.cookies.mapiType,req.cookies.mapiTok,"admin");
   obj.list_users = await admin.listUsers();
   obj.scheme = await admin.listScheme();
-  console.log(obj.scheme);
-  console.log(obj.list_users);
   res.render("page", obj);  
 })
 
@@ -161,6 +160,18 @@ app.get("/caliel-admin",await user.user("/"),await admin.admn("/"),async(req,res
   obj.caliel_alllogs = await get_all_caliel_logs();
   res.render("page", obj);
 })
+
+app.post("/create-user",await user.user("/"), await admin.admn("/"),async (req, res) => {
+  const {username,password,type,originurl} = req.body;
+  const scheme = await admin.listScheme();
+  let userobj = {};
+  Object.keys(scheme[type]).forEach(function(key){
+    userobj[key] = req.body[key];
+  })
+  await user.create(username,password,userobj,type);
+  res.redirect(originurl);
+});
+
 
 app.listen(port, () => {
   console.log(`Server is running on port http://localhost:${port}`);

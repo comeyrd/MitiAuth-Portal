@@ -1,32 +1,32 @@
 <div class="col-lg-4">
-<% Object.keys(scheme).forEach(function(type) { %>
-    <div class="card mb-4">
+    <% Object.keys(scheme).forEach(function(type) { %>
+        <div class="card mb-4">
 
             <div class="card-body">
-            <p>
-                <%=type%>
-            </p>
-            <form action="/create-user" method="POST">
-                <input type="hidden" name="type" value="<%=type%>">
-                <input type="hidden" name="originurl" value="<%= originurl %>">
-                <p>Username</p>
-                <input type="text" class="form-control" name="username">
-                <p>Password</p>
-                <input type="password" class="form-control" name="password">
-                <%Object.keys(scheme[type]).forEach(function(key){%>
-                    <p>
-                        <%= scheme[type][key].pretty %>
-                    </p>
-                    <input type="text" class="form-control" name="<%= scheme[type][key].id %>">
-                    <%});%>
-                        <button type="submit" class="btn btn-primary">Create User</button>
-            </form>
+                <p>
+                    <%=type%>
+                </p>
+                <form action="/create-user" method="POST">
+                    <input type="hidden" name="type" value="<%=type%>">
+                    <input type="hidden" name="originurl" value="<%= originurl %>">
+                    <p>Username</p>
+                    <input type="text" class="form-control" name="username">
+                    <p>Password</p>
+                    <input type="password" class="form-control" name="password">
+                    <%Object.keys(scheme[type]).forEach(function(key){%>
+                        <p>
+                            <%= scheme[type][key].pretty %>
+                        </p>
+                        <input type="text" class="form-control" name="<%= key %>">
+                        <%});%>
+                            <button type="submit" class="btn btn-primary">Create User</button>
+                </form>
             </div>
         </div>
-    <%});%>
+        <%});%>
 </div>
 
-        <!--
+<!--
 <h2 class="mb-4">User Creation</h2>
 <div class="col-lg-8">
     <div class="card mb-4">
