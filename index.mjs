@@ -25,7 +25,7 @@ const mysqlConfig = {
 };
 
 const all_tabs = [{id:"home",pretty:"Home"},{id:"dashboard",pretty:"Dashboard"}]
-const admin_tabs = [{id:"admin",pretty:"Admin"}]
+const admin_tabs = [{id:"caliel-admin",pretty:"Caliel-Admin"},{id:"admin",pretty:"Admin"}]
 
 const user = new User(layout,mysqlConfig);
 const admin =  new Admin(layout,mysqlConfig,layout.ADMIN.id);
@@ -148,6 +148,15 @@ app.get("/dashboard",await user.user("/"),async(req,res)=>{
 })
 app.get("/admin",await user.user("/"),await admin.admn("/"),async(req,res)=>{
   const obj = await build_default_obj(req.cookies.mapiType,req.cookies.mapiTok,"admin");
+  obj.list_users = await admin.listUsers();
+  obj.scheme = await admin.listScheme();
+  console.log(obj.scheme);
+  console.log(obj.list_users);
+  res.render("page", obj);  
+})
+
+app.get("/caliel-admin",await user.user("/"),await admin.admn("/"),async(req,res)=>{
+  const obj = await build_default_obj(req.cookies.mapiType,req.cookies.mapiTok,"caliel-admin");
   obj.caliel_loggers = await get_all_caliel();
   obj.caliel_alllogs = await get_all_caliel_logs();
   res.render("page", obj);

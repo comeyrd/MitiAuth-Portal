@@ -1,0 +1,29 @@
+<div class="card mb-4">
+    <div class="card-body">
+<% Object.keys(list_users).forEach(function(type) { %>
+    <h5 class="card-title">  <%=type %></h5>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Username</th>
+                    <% Object.keys(scheme[type]).forEach(function(key){%>
+                        <th><%= scheme[type][key].pretty %></th>
+                    <%});%>
+                </tr>
+            </thead>
+            <tbody>
+                <%list_users[type].forEach(function(user){%>
+                    <tr>
+                    <td><%= user["id"]%></td>
+                    <td><%= user["username"]%></td>
+                    <% Object.keys(scheme[type]).forEach(function(key){%>
+                        <td><%= user[key] %></td>
+                    <%});%>
+                </tr>
+                <%});%>
+            </tbody>
+        </table>
+    <%}); %>
+    </div>
+    </div>
