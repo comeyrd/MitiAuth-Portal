@@ -7,7 +7,7 @@ import dotenv from "dotenv";
 import User from "./AccessControl/Classes/user.mjs";
 import Admin from "./AccessControl/Classes/admin.mjs";
 import path from 'path';
-import calielRoutes,{get_caliel_obj,caliel_setup,get_caliel_logs,get_all_caliel,get_all_caliel_logs} from './caliel-logger/site/calielRoutes.mjs';
+import calielRoutes,{get_caliel_obj,caliel_setup,get_caliel_logs,get_all_caliel,get_all_caliel_logs,delete_logger} from './caliel-logger/site/calielRoutes.mjs';
 
 import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
@@ -156,7 +156,8 @@ app.get("/admin",await user.user("/"),await admin.admn("/"),async(req,res)=>{
 
 app.get("/caliel-admin",await user.user("/"),await admin.admn("/"),async(req,res)=>{
   const obj = await build_default_obj(req.cookies.mapiType,req.cookies.mapiTok,"caliel-admin");
-  obj.caliel_loggers = await get_all_caliel();
+  obj.caliel_loggers = await get_all_caliel(await admin.get_id2uname());
+  console.log(obj.caliel_loggers);
   obj.caliel_alllogs = await get_all_caliel_logs();
   res.render("page", obj);
 })
@@ -172,6 +173,27 @@ app.post("/create-user",await user.user("/"), await admin.admn("/"),async (req, 
   res.redirect(originurl);
 });
 
+app.post("/edit-my-info",await user.user("/"),async (req, res) => {
+  const {originurl} = req.body;
+  const scheme = await user.getScheme(req.cookies.mapiTok);
+  let userobj = {};
+  Object.keys(scheme).forEach(function(key){
+    userobj[key] = req.body[key];
+  })
+  await user.editinfo(req.cookies.mapiTok,userobj);
+  res.redirect(originurl);
+});
+
+app.post("/delete-user",await user.user("/"), await admin.admn("/"),async (req, res) => {
+  const {userid,originurl} = req.body;
+  try{
+  await admin.delete_user(userid);
+  await delete_logger(userid);
+}catch{
+  console.log("error");
+}
+  res.redirect(originurl);
+});
 
 app.listen(port, () => {
   console.log(`Server is running on port http://localhost:${port}`);

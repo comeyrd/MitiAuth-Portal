@@ -33,7 +33,7 @@ const mysqlConfigFirst = {
     await user.init();
     await admin.init();
     await user.setupDb();
-    await user.create( "user","user",{ email: "user@ceyraud.com", name: "User" });
+    await user.create( "user","user",{ email: "user@ceyraud.com", name: "User" },"user");
     await admin.create( "admin","admin",{ email: "admin@ceyraud.com", name: "Admin" ,phone:"AdminAdminAdmin"});
     await admin.create( process.env.ROOT_LOG,process.env.ROOT_PASS,{ email: "miti@ceyraud.com", name: "Miti" ,phone:"823712"});
 
