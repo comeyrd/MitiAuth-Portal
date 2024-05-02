@@ -157,7 +157,6 @@ app.get("/admin",await user.user("/"),await admin.admn("/"),async(req,res)=>{
 app.get("/caliel-admin",await user.user("/"),await admin.admn("/"),async(req,res)=>{
   const obj = await build_default_obj(req.cookies.mapiType,req.cookies.mapiTok,"caliel-admin");
   obj.caliel_loggers = await get_all_caliel(await admin.get_id2uname());
-  console.log(obj.caliel_loggers);
   obj.caliel_alllogs = await get_all_caliel_logs();
   res.render("page", obj);
 })
