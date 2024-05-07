@@ -13,26 +13,56 @@
         </div>
         <div class="col-lg-8">
             <div class="card mb-4">
+                <div class="row">
+                    <div class="col-lg-9"></div>
+                    <div class="col-lg-3"> <button onclick="toggleEdit()" class="btn btn-primary">Toggle Edit</button>
+                    </div>
+                </div>
                 <div class="card-body">
                     <div id="user-info-div">
-                        <% let count=0;%>
-                            <% for (const key in info) { %>
-                                <% if (count > 0) { %>
-                                    <hr>
-                                    <% } %>
-                                    <% count = count + 1; %>
-                                        <div class="row">
-                                            <div class="col-sm-3">
-                                                <p class="mb-0 text-muted"><%= info[key].pretty %></p>
-                                            </div>
-                                            <div class="col-sm-9">
-                                                <p class="mb-0 text-muted"><%= info[key].data %></p>
-                                            </div>
-                                        </div>
-                                        <% }%>
+                        <form action="/edit-my-info" method="POST">
+                            <input type="hidden" name="originurl" value="<%= originurl %>" disabled>
+                            <% let count=0;%>
+                                <% for (const key in info) { %>
+                                    <% if (count> 0) { %>
+                                        <hr>
+                                        <% } %>
+                                            <% count=count + 1; %>
+                                                <div class="row">
+                                                    <div class="col-sm-3">
+                                                        <p class="mb-0 text-muted">
+                                                            <%= info[key].pretty %>
+                                                        </p>
+                                                    </div>
+                                                    <div class="col-sm-9">
+                                                        <input type="text" class="form-control" name="<%=key%>"
+                                                            value="<%= info[key].data %>" disabled>
+                                                    </div>
+                                                </div>
+                                                <% }%>
+                                <div class="row">
+                                    <div class="col-lg-4"></div>
+                                    <div class="col-lg-4">
+                                    <button id="profile-update-btn"type="submit" class="btn btn-primary" hidden>Update</button></div>
+                                    <div class="col-lg-4"></div>
+                                </div>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    function toggleEdit() {
+        var userInfoDiv = document.getElementById('user-info-div');
+        var profilebtn = document.getElementById('profile-update-btn');
+        var inputs = userInfoDiv.querySelectorAll('input');
+        console.log(inputs);
+        inputs.forEach(function (input) {
+            input.disabled = !input.disabled;
+        });
+        profilebtn.hidden = !profilebtn.hidden;
+    }
+</script>

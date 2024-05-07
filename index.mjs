@@ -47,6 +47,7 @@ const mapiHandl = async (res, dataCallback) => {
 };
 
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cookieParser());
 const cookieSett = {
   maxAge: 3 * 24 * 60 * 60 * 1000,
@@ -133,6 +134,7 @@ app.get("/profile",await user.user("/"),async(req,res)=>{
   res.render("page", obj);
 })
 app.get("/home",await user.user("/"),async(req,res)=>{
+  const id = (await user.decode(req.cookies.mapiTok)).id;
   const obj = await build_default_obj(req.cookies.mapiType,req.cookies.mapiTok,"home");
   res.render("page", obj);
 })
@@ -142,8 +144,42 @@ app.get("/dashboard",await user.user("/"),async(req,res)=>{
 })
 app.get("/admin",await user.user("/"),await admin.admn("/"),async(req,res)=>{
   const obj = await build_default_obj(req.cookies.mapiType,req.cookies.mapiTok,"admin");
-  res.render("page", obj);
+  obj.list_users = await admin.listUsers();
+  obj.scheme = await admin.listScheme();
+  res.render("page", obj);  
 })
+
+app.post("/create-user",await user.user("/"), await admin.admn("/"),async (req, res) => {
+  const {username,password,type,originurl} = req.body;
+  const scheme = await admin.listScheme();
+  let userobj = {};
+  Object.keys(scheme[type]).forEach(function(key){
+    userobj[key] = req.body[key];
+  })
+  await user.create(username,password,userobj,type);
+  res.redirect(originurl);
+});
+
+app.post("/edit-my-info",await user.user("/"),async (req, res) => {
+  const {originurl} = req.body;
+  const scheme = await user.getScheme(req.cookies.mapiTok);
+  let userobj = {};
+  Object.keys(scheme).forEach(function(key){
+    userobj[key] = req.body[key];
+  })
+  await user.editinfo(req.cookies.mapiTok,userobj);
+  res.redirect(originurl);
+});
+
+app.post("/delete-user",await user.user("/"), await admin.admn("/"),async (req, res) => {
+  const {userid,originurl} = req.body;
+  try{
+  await admin.delete_user(userid);
+}catch{
+  console.log("error");
+}
+  res.redirect(originurl);
+});
 
 app.listen(port, () => {
   console.log(`Server is running on port http://localhost:${port}`);
@@ -156,5 +192,5 @@ function showObj(obj) {
 async function build_default_obj(type,token,current){
   const info = await user.getinfo(token);
   const tabs = gettabs(type);
-  return {"pages":tabs,"current_page": current,"dir":"pages/","info":info}
+  return {"pages":tabs,"current_page": current,"dir":"pages/","info":info,"originurl":"/"+current}
 }
