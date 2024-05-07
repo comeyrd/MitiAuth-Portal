@@ -28,9 +28,9 @@ const admin_tabs = [{id:"admin",pretty:"Admin"}]
 const user = new User(layout,mysqlConfig);
 const admin =  new Admin(layout,mysqlConfig,layout.ADMIN.id);
 
-await user.init();
-await admin.init();
 
+await user.init(process.env.JWT_KEY);
+await admin.init(process.env.JWT_KEY);
 const mapiHandl = async (res, dataCallback) => {
   try {
     const data = await dataCallback();
