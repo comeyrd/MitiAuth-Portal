@@ -170,6 +170,21 @@ app.post("/edit-my-info",await user.user("/"),async (req, res) => {
   await user.editinfo(req.cookies.mapiTok,userobj);
   res.redirect(originurl);
 });
+app.post("/update-user-pass",await user.user("/"),async (req, res) => {
+  const {originurl,password} = req.body;
+  await user.update_password(req.cookies.mapiTok,password);
+  res.redirect(originurl);
+});
+
+app.post("/update-username", await user.user("/"), async (req, res) => {//TODO fix and find a way to manage errors
+  const { originurl, username } = req.body;
+  try {
+    await user.update_username(req.cookies.mapiTok, username);
+  } catch(e) {
+    console.log(e);
+  }
+  res.redirect(originurl);
+});
 
 app.post("/delete-user",await user.user("/"), await admin.admn("/"),async (req, res) => {
   const {userid,originurl} = req.body;
