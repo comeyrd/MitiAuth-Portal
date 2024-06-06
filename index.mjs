@@ -31,9 +31,9 @@ const user = new User(layout,mysqlConfig);
 const admin =  new Admin(layout,mysqlConfig,layout.ADMIN.id);
 await caliel_setup(mysqlConfig);
 
-await user.init();
-await admin.init();
 
+await user.init(process.env.JWT_KEY);
+await admin.init(process.env.JWT_KEY);
 const mapiHandl = async (res, dataCallback) => {
   try {
     const data = await dataCallback();
@@ -180,6 +180,21 @@ app.post("/edit-my-info",await user.user("/"),async (req, res) => {
     userobj[key] = req.body[key];
   })
   await user.editinfo(req.cookies.mapiTok,userobj);
+  res.redirect(originurl);
+});
+app.post("/update-user-pass",await user.user("/"),async (req, res) => {
+  const {originurl,password} = req.body;
+  await user.update_password(req.cookies.mapiTok,password);
+  res.redirect(originurl);
+});
+
+app.post("/update-username", await user.user("/"), async (req, res) => {//TODO fix and find a way to manage errors
+  const { originurl, username } = req.body;
+  try {
+    await user.update_username(req.cookies.mapiTok, username);
+  } catch(e) {
+    console.log(e);
+  }
   res.redirect(originurl);
 });
 
