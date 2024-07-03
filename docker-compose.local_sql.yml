@@ -1,0 +1,57 @@
+name: mportal-with_db
+
+services:
+  mariadb:
+    image: mariadb:latest
+    container_name: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: /run/secrets/db_root_password
+      MYSQL_DATABASE: /run/secrets/db_name
+      MYSQL_USER: /run/secrets/db_user
+      MYSQL_PASSWORD: /run/secrets/db_pass
+    secrets:
+      - db_user
+      - db_pass
+      - db_root_password
+      - db_name
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      interval: 5s
+      retries: 10
+      test:
+        [
+          "CMD",
+          "healthcheck.sh",
+          "--su-mysql",
+          "--connect",
+          "--innodb_initialized"
+        ]
+      timeout: 30s
+
+  mportal:
+    build: .
+    container_name: mportal
+    ports:
+      - "8102:8102"
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    environment:
+      DB_HOST: mariadb
+      DB_USER: /run/secrets/db_user
+      DB_PASSWORD: /run/secrets/db_pass
+      DB_DATABASE: /run/secrets/db_name
+      JWT_KEY: /run/secrets/jwt
+    secrets:
+       - db_user
+       - db_pass
+       - jwt
+       - db_name
+    volumes:
+      - init:/usr/vol
+volumes:
+  db_data:
+  init:

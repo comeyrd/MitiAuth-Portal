@@ -11,7 +11,7 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const app = express();
-const port = 8102;
+const port = process.env.MPORTAL_PORT | 8000;
 
 dotenv.config();
 

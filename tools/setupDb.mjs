@@ -23,12 +23,12 @@ const mysqlConfigFirst = {
   let con;
 
   try {
-    con = await mysql.createConnection(mysqlConfigFirst);
-    await con.query(`DROP DATABASE mapi;`);
-    await con.query(`CREATE DATABASE mapi;`);
-    await con.end();
+    //con = await mysql.createConnection(mysqlConfigFirst);
+    //await con.query(`DROP DATABASE mapi;`);
+    //await con.query(`CREATE DATABASE mapi;`);
+    //await con.end();
     let user = new User(layout,mysqlConfig);
-    let admin = new Admin(layout,mysqlConfig);
+    let admin = new Admin(layout,mysqlConfig,layout.ADMIN.id);
     await user.init();
     await admin.init();
     await user.setupDb();
