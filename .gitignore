@@ -91,6 +91,8 @@ out
 .nuxt
 dist
 
+.env-*
+
 .mportal-env
 # Gatsby files
 .cache/
